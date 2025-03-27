@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhe da Ocorrência</title>
+</head>
+<body>
+    <h1>Detalhes da Ocorrência #{{ ocorrencia.id }}</h1>
+    <p><strong>Titulo:</strong> {{ ocorrencia.id }}</p>
+    <p><strong>Descrição:</strong> {{ ocorrencia.descicao }}</p>
+    <p><strong>Status:</strong> {{ ocorrencia.status }}</p>
+    <p><strong>Data de Abertura:</strong> {{ ocorrencia.data_abertura }}</p>
+    <p><strong>Data de Encerramento:</strong> {{ ocorrencia.data_encerramento }}</p>
+
+
+    <a href="{% url 'lista_ocorrencia' %}"> Voltar à lista de ocorrências</a>
+</body>
+</html>
+

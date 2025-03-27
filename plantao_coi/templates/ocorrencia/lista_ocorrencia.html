@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COI Plantão</title>
+</head>
+<body>
+    <h1>Lista de Ocorrências </h1>
+    <ul>
+        {% for ocorrencia in ocorrencias %}
+            <li>
+                <a href="{%url 'detalhe_ocorrencia' ocorrencia.id}">
+                    {{ ocorrencia.titulo }} - {{ocorrencia.status}}
+                </a>
+            </li>
+        {% empty %}
+            <li>Nenhuma ocorrencia registrada!</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
