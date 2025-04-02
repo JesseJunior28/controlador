@@ -70,12 +70,11 @@
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Criticidade</th>
                 <th>Unidade</th>
                 <th>Local</th>
+                <th>Criticidade</th>
                 <th>Status da Ocorrência</th>
                 <th>Data de abertura</th>
-                <th>Data de Encerramento</th>
                 <th>Ações</th>
               </tr>
             </thead>
@@ -92,9 +91,9 @@
                 <td>{{ ocorrencia.id|default:"" }}</td>
                 <td>{{ ocorrencia.unidade|default:"" }}</td>
                 <td>{{ ocorrencia.local|default:"Sem OS" }}</td>
+                <td>{{ ocorrencia.criticidade|default:"" }}</td>
                 <td>{{ ocorrencia.status|default:"" }}</td>
                 <td>{{ ocorrencia.data_abertura|date:"d/m/Y"|default:"" }}</td>
-                <td>{{ ocorrencia.data_encerramento|default:"" }}</td>
                 <td>{{ ocorrencia.ações|default:"" }}</td>
                 <td>
                   {{ocorrencia.concluida }}
