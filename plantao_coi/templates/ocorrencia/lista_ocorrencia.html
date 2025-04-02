@@ -1,110 +1,370 @@
-{% extends 'ocorrencia/modelo.html' %}
-{% load static %}
-{% load crispy_forms_tags %}
-
-{% block conteudo %}
-
-<div class="container mt-3">
+{% extends 'ocorrencia/modelo.html' %} {% load static %} {% load
+    crispy_forms_tags %} {% block conteudo %}
     
-
-    <div class="row mt-3">
+    <div class="container mt-3">
+      <div class="row mt-3">
         <div class="col">
-
-            <h2 class="mb-4">Informações do Plantão</h2>
-
+          <h2 class="mb-4">Informações do Plantão</h2>
         </div>
-    </div>
-
-    <div class="row mt-2 mb-2">
-        <div class="col-4 ">
-            
-
-            <div class="d-flex justify-content-between align-items-start mb-2">
-                <span><strong>NOME DO CONTROLADOR:</strong></span>
-                <span>Jessé Júnior</span>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-start mb-2">
-                <span><strong>TIPO DE ACESSO:</strong></span>
-                <span>coi</span>
-            </div>
-
-            
-
-            <div class="d-flex justify-content-between align-items-start">
-                <span><strong>OCORRÊNCIAS EM ABERTO:</strong></span>
-                <span>0</span>
-            </div>
-        </div>
-        
-
+      </div>
+    
+      <div class="row mt-3 mb-2">
         <div class="col-4">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-                <span><strong>DATA/HORA DE INÍCIO:</strong></span>
-                <span>25/03/2025, 11:06:39</span>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-start mb-2">
-                <span><strong>TURNO DO PLANTÃO:</strong></span>
-                <span>DIÚRNO</span>
-            </div>
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span><strong>NOME DO PROGRAMADOR:</strong></span>
+            <span>{{user.username}}</span>
+          </div>
+    
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span><strong>TIPO DE ACESSO:</strong></span>
+            <span>coi</span>
+          </div>
         </div>
-    </div>
-
-    <div class="row mt-3">
+    
+        <div class="col-4">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span><strong>DATA/HORA DE INÍCIO:</strong></span>
+            <span>{{plantao.inicio|date:"d/m/Y h:i"|default:"" }}</span>
+          </div>
+    
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span><strong>STATUS DO PLANTÃO:</strong></span>
+            <span>ATIVO</span>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="d-flex justify-content-between align-items-start">
+            <span><strong>OCORRÊNCIAS EM ABERTO:</strong></span>
+            <span>{{em_aberto}}</span>
+          </div>
+        </div>
+      </div>
+    
+      <div class="row mt-2">
         <div class="col">
-
-            <h2>Listagem de Ocorrências</h2>
-
+          <h2>Listagem de Ocorrências</h2>
         </div>
-    </div>
-
-    <div class="row mb-4">
-    <div class="col text-right">
-        <a href="{% url 'cadastrar_ocorrencia' %}" class="btn btn-primary">Cadastrar Ocorrência</a> 
-    </div>
-    </div>
-
-    <div class="row">
-    <div class="col">
-
-    <table class="table table-striped">
-        <thead>
-            <tr>
+      </div>
+    
+      <div class="row mb-4">
+        <div class="col text-end">
+          <form class="row row-cols-lg-auto g-3 align-items-center" action="">
+            {% for field in form %}
+            <div class="col-12">
+              <!-- {{ field.label_tag }} -->
+              {{ field }}
+            </div>
+            {% endfor %}
+    
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary">Filtrar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    
+    
+      <div class="row">
+        <div class="col">
+          <table class="table ">
+            <thead>
+              <tr>
                 <th>ID</th>
                 <th>Criticidade</th>
                 <th>Unidade</th>
-                <th>Título</th>
                 <th>Local</th>
                 <th>Status da Ocorrência</th>
                 <th>Data de abertura</th>
                 <th>Data de Encerramento</th>
                 <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for ocorrencia in ocorrencias %}
-                <tr>
-                    <td>{{ ocorrencia.id|default:"" }}</td>
-                    <td>{{ ocorrencia.criticidade|default:"" }}</td>  
-                    <td>{{ ocorrencia.titulo|default:"" }}</td>  
-                    <td>{{ ocorrencia.local|default:"Sem OS" }}</td>
-                    <td>{{ ocorrencia.data_abertura|date:"d/m/Y"|default:"" }}</td>  
-                    <td>{{ ocorrencia.data_encerramento|default:"" }}</td>  
-                    <td>{{ ocorrencia.status|default:"" }}</td> 
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="10">Nenhuma ocorrência cadastrada.</td>  
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-
+              </tr>
+            </thead>
+            <tbody>
+              {% for ocorrencia in ocorrencias %}
+              <tr
+                class="accordion-toggle"
+                data-bs-toggle="collapse"
+                href="#view-occ-{{ocorrencia.pk}}"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample"
+              >
+                <td>{{ ocorrencia.id|default:"" }}</td>
+                <td>{{ ocorrencia.unidade|default:"" }}</td>
+                <td>{{ ocorrencia.local|default:"Sem OS" }}</td>
+                <td>{{ ocorrencia.status|default:"" }}</td>
+                <td>{{ ocorrencia.data_abertura|date:"d/m/Y"|default:"" }}</td>
+                <td>{{ ocorrencia.data_encerramento|default:"" }}</td>
+                <td>{{ ocorrencia.ações|default:"" }}</td>
+                <td>
+                  {{ocorrencia.concluida }}
+                  {% if ocorrencia.em_aberto %}
+                  <span class="badge text-bg-danger">{{ ocorrencia.get_status_display|default:"" }}</span>
+                  {% else %}
+                  <span class="badge text-bg-success">{{ ocorrencia.get_status_display|default:"" }}</span>
+                  {% endif %}
+                  
+                </td>
+                <td>
+                  <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary btn-sm">Detalhe</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="12" style="padding: 0 !important;">
+                  <div
+                    class="accordian-body collapse {% if ocorrencia.id == ocorrencia_id %} show {% endif %}"
+                    id="view-occ-{{ocorrencia.pk}}"
+                    style="background-color: #f0f2f5;"
+                  >
+                    <div class="row mb-2">
+                      <div class="col">
+                        <div class="card">
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="col">
+                                <h5 class="card-title">
+                                  Detalhes da Ocorrência OS: {{ ocorrencia.ordem_de_servico }}
+                                </h5>
+                                <div class="row">
+                                  <div class="col">
+                                    <p class="card-text">
+                                      <strong>Unidade:</strong> 
+                                      {{ocorrencia.unidade }}
+                                    </p>
+                                    <p class="card-text">
+                                      <strong>Bairro:</strong> 
+                                      {{ocorrencia.bairro.nome }}
+                                    </p>
+                                    <p class="card-text">
+                                      <strong>Data da Solicitação:</strong> 
+                                      {{ocorrencia.data_solicitacao }}
+                                    </p>
+                                  </div>
+                                  <div class="col">
+                                    <p class="card-text">
+                                      <strong>Parecer:</strong> 
+                                      {{ocorrencia.parecer.descricao }}
+                                    </p>
+                                    <p class="card-text">
+                                      <strong>Situação da Água:</strong> 
+                                      {{ocorrencia.situacao_agua_cliente.descricao }}
+                                    </p>
+                                    <p class="card-text">
+                                      <strong>Status da Região:</strong> 
+                                      {{ocorrencia.status_regiao.descricao }}
+                                    </p>
+                                  </div>
+                                  <div class="col">
+                                    <p class="card-text">
+                                      <strong>Plantonista:</strong>
+                                      {{ocorrencia.plantonista.username }}
+                                    </p>
+                                    <p class="card-text">
+                                      <strong>Status:</strong> 
+                                     {{ocorrencia.get_status_display}}
+                                    </p>
+                                    <p class="card-text">
+                                      <strong>Descrição:</strong> 
+                                      {{ocorrencia.descricao }}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row mt-3">
+                              <div class="col">
+    
+                                <div class="row d-flex justify-content-center">
+                                  <div class="col">
+                                    <h3>Comentários</h3>
+                                    <div class="card shadow-0 border" style="background-color: #f0f2f5;">
+                                      <div class="card-body p-4">
+         
+                                          {% for comentario in ocorrencia.comentarios.all %}
+                                        <div class="card mb-4">
+                                          <div class="card-body">
+                                            <p class="mb-0"><strong>{{comentario.user.username}}:</strong> </p>
+                                            <p class="mb-0">{{comentario.texto}}</p>
+                                            <p class="small text-muted mb-0">{{comentario.data_criacao|date:"d/m/Y"|default:"" }}</p>
+                                            
+                                          </div>
+                                        </div>
+                                        {% empty %}
+                                        <p>Nenhum comentário</p>
+                                
+                                       {% endfor %}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+    
+                              </div>
+                            </div>
+    
+                            <div class="row mt-2">
+                              <div class="col text-end">
+                                <div class="btn-group" role="group">
+                                  {% if ocorrencia.em_aberto %}
+    
+                                  <a
+                                    href="{% url 'editar_ocorrencia' ocorrencia.id %}"
+                                    class="btn btn-secondary btn-sm"
+                                    >Editar</a
+                                  >
+      
+                                  <button type="button" id="btnExcluir" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#excluirModal" data-os="{{ocorrencia.ordem_de_servico}}" data-url="{% url 'excluir_ocorrencia' ocorrencia.id %}">
+                                    Excluir
+                                  </button>
+                                  <button type="button" id="btnConcluir" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#concluirModal" data-os="{{ocorrencia.ordem_de_servico}}" data-url="{% url 'concluir_ocorrencia' ocorrencia.id  %}">
+                                    Concluir
+                                  </button>
+                                  <button type="button" id="btnCommentModal" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#comentarioModal" data-ocorrencia="{{ocorrencia.id}}" >Inserir comentário</button>
+                                  {% endif %}
+                                </div>
+                              </div>
+                            </div>
+    
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="10">Nenhuma ocorrência cadastrada.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    
+      <div class="row mb-4">
+        <div class="col text-end">
+          <a href="{% url 'cadastrar_ocorrencia' %}" class="btn btn-primary"
+            >Cadastrar Ocorrência</a
+          >
+        </div>
+      </div>
     </div>
+    
+    
+    <div class="modal fade" id="excluirModal" tabindex="-1" role="dialog" aria-labelledby="excluirModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="excluirModalLabel">Confirmar Exclusão</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  Tem certeza que deseja excluir a ocorrência <span id="osExcluir"></span>?
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <form method="get" action="#" id="excluirForm">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-danger">Excluir</button>
+                  </form>
+              </div>
+          </div>
+      </div>
     </div>
-</div>
-
-{% endblock %}
+    
+    
+    <div class="modal fade" id="concluirModal" tabindex="-1" role="dialog" aria-labelledby="concluirModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="concluirModalLabel">Confirmar Conclusão</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  Tem certeza que deseja concluir a ocorrência <span id="osConcluir"></span>?
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <form method="post" action="#" id="concluirForm">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-success">Concluir</button>
+                  </form>
+              </div>
+          </div>
+      </div>
+    </div>
+    
+    
+    <div class="modal fade" id="comentarioModal" tabindex="-1" role="dialog" aria-labelledby="comentarioModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="comentarioModalLabel">Adicionar Comentário</h5>
+                  
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  
+              </div>
+              <div class="modal-body">
+                  <form method="post" action="{% url 'adicionar_comentario' %}">
+                      {% csrf_token %}
+                      <div class="form-group">
+                        <input type="hidden" id="id_ocorrencia" name="ocorrencia" value="">
+                        <input type="hidden" id="id_user" name="user" value="{{user.id}}">
+                          <label for="texto">Comentário:</label>
+                          <textarea class="form-control" id="texto" name="texto" rows="3" required="true"></textarea>
+                      </div>
+                      <button type="submit" class="btn btn-primary">Enviar</button>
+                  </form>
+              </div>
+          </div>
+      </div>
+    </div>
+    
+    {% endblock %}
+    
+    
+    
+    {% block scripts %}
+      
+    <script>
+      const comentarioModal = document.getElementById('concluirModal');
+      const excluirModal = document.getElementById('excluirModal');
+      const concluirForm = document.getElementById('concluirForm');
+      const excluirForm = document.getElementById('excluirForm');
+      const btnConcluir = document.getElementById('btnConcluir');
+      const btnExcluir = document.getElementById('btnExcluir');
+      const osConcluir = document.getElementById('osConcluir');
+      const osExcluir = document.getElementById('osExcluir');
+      const btnCommentModal = document.getElementById('btnCommentModal');
+      const inputCommentOccorrencia = document.getElementById('id_ocorrencia');
+    
+      btnCommentModal.addEventListener('click', event => {
+        inputCommentOccorrencia.value = event.target.dataset.ocorrencia;
+      });
+    
+      btnConcluir.addEventListener('click', event => {
+        osConcluir.innerText = event.target.dataset.os;
+        concluirForm.action = event.target.dataset.url;
+      });
+    
+      btnExcluir.addEventListener('click', event => {
+        console.log(event.target.dataset.url);
+        osExcluir.innerText = event.target.dataset.os;
+        excluirForm.action = event.target.dataset.url;
+      });
+    
+      comentarioModal.addEventListener('hidden.bs.modal', event => {
+        inputCommentOccorrencia.value = '';
+      });
+    
+      excluirModal.addEventListener('hidden.bs.modal', event => {
+        inputCommentOccorrencia.value = '';
+      });
+      
+    </script>
+    
+    {% endblock %}
+    
+    

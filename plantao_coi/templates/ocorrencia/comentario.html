@@ -1,0 +1,30 @@
+{% extends 'ocorrencia/modelo.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block conteudo %}
+<div class="container mt-3">
+    <h2>Comentários da Ocorrência {{ ocorrencia.id }}</h2>
+    
+    <ul class="list-group">
+        {% for comentario in comentarios %}
+            <li class="list-group-item">
+                <strong>{{ comentario.autor }}</strong>: {{ comentario.texto }} <br>
+                <small class="text-muted">{{ comentario.data_criacao }}</small>
+            </li>
+        {% empty %}
+            <li class="list-group-item">Nenhum comentário ainda.</li>
+        {% endfor %}
+    </ul>
+
+    <h3 class="mt-4">Adicionar Comentário</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }} 
+        <button type="submit" class="btn btn-primary">Adicionar Comentário</button>
+    </form>
+
+    <a href="{% url 'lista_ocorrencia' %}" class="btn btn-secondary mt-3">Voltar</a>
+</div>
+
+{% endblock %}
