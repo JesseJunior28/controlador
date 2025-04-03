@@ -10,17 +10,12 @@ class Unidade(models.Model):
 
     def __str__(self):
         return self.nome
-class DataAbertura(models.Model):
+class DataSolicitacao(models.Model):
     data = models.DateField()
 
     def __str__(self):
         return self.data.strftime("%d/%m/%Y")
 
-class DataEncerramento(models.Model):
-    data = models.DateField()
-
-    def __str__(self):
-        return self.data.strftime("%d/%m/%Y")
 class Local(models.Model):   #locins
     local = models.CharField(max_length=70, verbose_name= "Local")
 
@@ -65,9 +60,13 @@ class Ocorrencia(models.Model):
     )
     titulo = models.CharField(max_length=30, verbose_name= "Título")
     descricao = models.TextField(verbose_name="Descrição da Ocorrência")
-    status = models.CharField(max_length=20, choices=[('PENDENTE', 'Pendente'), ('EM ANDAMENTO', 'Em Andamento'), ('ENCERRADA', 'Encerrada')])
-    data_abertura = models.DateTimeField(auto_now_add=True, verbose_name="Data de abertura")  
-    data_encerramento = models.DateTimeField(null=True, blank=True, verbose_name="Data de Encerramento")
+    data_solicitacao = models.DateTimeField(null=True, blank= True, verbose_name= 'Data da Solicitação')
+    status = models.CharField(
+        'Status',
+        max_length=10,
+        choices=StatusOcorrencia.choices,
+        default=StatusOcorrencia.EM_ABERTO,
+    )
 
     @property
     def em_aberto(self):
@@ -76,4 +75,6 @@ class Ocorrencia(models.Model):
     @property
     def concluida(self):
         return self.status == self.StatusOcorrencia.CONCLUIDA
+
+
     

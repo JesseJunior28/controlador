@@ -35,8 +35,8 @@ def lista_ocorrencia(request):
         ocorrencias = ocorrencias.filter(unidade=request.GET.get('unidade'))
     if request.GET.get('data_abertura'):
         ocorrencias = ocorrencias.filter(data_abertura=request.GET.get('data_abertura'))
-    if request.GET.get('data_encerramento'):
-        ocorrencias = ocorrencias.filter(data_encerramento=request.GET.get('data_encerramento'))
+    if request.GET.get('data_solicitacao'):
+        ocorrencias = ocorrencias.filter(data_solicitacao=request.GET.get('data_solicitacao'))
     if request.GET.get('status'):
         ocorrencias = ocorrencias.filter(status=request.GET.get('status'))
     if request.GET.get('status', Ocorrencia.StatusOcorrencia.EM_ABERTO):
@@ -85,7 +85,7 @@ def editar_ocorrencia(request, ocorrencia_id):
         form = OcorrenciaForm(request.POST, instance=ocorrencia)
         if form.is_valid():
             form.save()
-            messages.success(request, f'Ocorrência {ocorrencia.ordem_de_servico} editada com sucesso!')
+            messages.success(request, f'Ocorrência {ocorrencia.id} editada com sucesso!')
             return redirect('lista_ocorrencia')
     else:
         form = OcorrenciaForm(instance=ocorrencia)
@@ -119,7 +119,7 @@ def concluir_ocorrencia(request, ocorrencia_id):
 
     ocorrencia.status = Ocorrencia.StatusOcorrencia.CONCLUIDA
     ocorrencia.save()
-    messages.success(request, f'Ocorrência {ocorrencia.ordem_de_servico} concluída com sucesso!')
+    messages.success(request, f'Ocorrência {ocorrencia.id} concluída com sucesso!')
     
     return redirect('lista_ocorrencia')
 

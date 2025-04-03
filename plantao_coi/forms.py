@@ -1,17 +1,17 @@
 from django import forms
-from .models import Ocorrencia , Plantao, Comentario, DataAbertura
+from .models import Ocorrencia , Plantao, Comentario, DataSolicitacao
 from django.contrib.admin.widgets import AdminDateWidget
 
 class OcorrenciaForm(forms.ModelForm):
     class Meta: 
         model = Ocorrencia
-        fields = ['unidade', 'local', 'criticidade', 'status', 'data_encerramento']
+        fields = ['unidade', 'local', 'criticidade', 'status', 'data_solicitacao']
         widgets = {
             "unidade": forms.Select(attrs={'class': 'form-control'}),
             "local": forms.Select(attrs={'class': 'form.control'}),
             "criticidade": forms.Select(attrs={'class': 'form.control'}),
             "status": forms.Select(attrs={'class': 'form.control'}),
-            "data_encerramento": forms.TextInput(attrs={'class': 'datetime-local', 'type': 'date'}),
+            "data_solicitacao": forms.TextInput(attrs={'class': 'datetime-local', 'type': 'date'}),
             
         }
 
@@ -43,7 +43,7 @@ class PlantaoForm(forms.ModelForm):
 
 class DataSolicitacaoForm(forms.ModelForm):
     class Meta:
-        model = DataAbertura
+        model = DataSolicitacao
         fields = '__all__'
         widgets = {
             'data_de_solicitacao': AdminDateWidget()

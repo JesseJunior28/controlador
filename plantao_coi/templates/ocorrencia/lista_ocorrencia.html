@@ -73,8 +73,8 @@
                 <th>Unidade</th>
                 <th>Local</th>
                 <th>Criticidade</th>
+                <th>Data de Solicitação</th>
                 <th>Status da Ocorrência</th>
-                <th>Data de abertura</th>
                 <th>Ações</th>
               </tr>
             </thead>
@@ -92,8 +92,8 @@
                 <td>{{ ocorrencia.unidade|default:"" }}</td>
                 <td>{{ ocorrencia.local|default:"Sem OS" }}</td>
                 <td>{{ ocorrencia.criticidade|default:"" }}</td>
+                <td>{{ ocorrencia.data_solicitacao|date:"d/m/Y"|default:"" }}</td>
                 <td>{{ ocorrencia.status|default:"" }}</td>
-                <td>{{ ocorrencia.data_abertura|date:"d/m/Y"|default:"" }}</td>
                 <td>{{ ocorrencia.ações|default:"" }}</td>
                 <td>
                   {{ocorrencia.concluida }}
@@ -124,7 +124,7 @@
                             <div class="row">
                               <div class="col">
                                 <h5 class="card-title">
-                                  Detalhes da Ocorrência OS: {{ ocorrencia.ordem_de_servico }}
+                                  Detalhes da Ocorrência OS: {{ ocorrencia.id }}
                                 </h5>
                                 <div class="row">
                                   <div class="col">
@@ -133,8 +133,8 @@
                                       {{ocorrencia.unidade }}
                                     </p>
                                     <p class="card-text">
-                                      <strong>Bairro:</strong> 
-                                      {{ocorrencia.bairro.nome }}
+                                      <strong>Local:</strong> 
+                                      {{ocorrencia.local.nome }}
                                     </p>
                                     <p class="card-text">
                                       <strong>Data da Solicitação:</strong> 
@@ -143,16 +143,12 @@
                                   </div>
                                   <div class="col">
                                     <p class="card-text">
-                                      <strong>Parecer:</strong> 
-                                      {{ocorrencia.parecer.descricao }}
+                                      <strong>Criticidade:</strong> 
+                                      {{ocorrencia.criticidade.descricao }}
                                     </p>
                                     <p class="card-text">
-                                      <strong>Situação da Água:</strong> 
-                                      {{ocorrencia.situacao_agua_cliente.descricao }}
-                                    </p>
-                                    <p class="card-text">
-                                      <strong>Status da Região:</strong> 
-                                      {{ocorrencia.status_regiao.descricao }}
+                                      <strong>Status:</strong> 
+                                      {{ocorrencia.status.descricao }}
                                     </p>
                                   </div>
                                   <div class="col">
@@ -213,10 +209,10 @@
                                     >Editar</a
                                   >
       
-                                  <button type="button" id="btnExcluir" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#excluirModal" data-os="{{ocorrencia.ordem_de_servico}}" data-url="{% url 'excluir_ocorrencia' ocorrencia.id %}">
+                                  <button type="button" id="btnExcluir" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#excluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'excluir_ocorrencia' ocorrencia.id %}">
                                     Excluir
                                   </button>
-                                  <button type="button" id="btnConcluir" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#concluirModal" data-os="{{ocorrencia.ordem_de_servico}}" data-url="{% url 'concluir_ocorrencia' ocorrencia.id  %}">
+                                  <button type="button" id="btnConcluir" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#concluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'concluir_ocorrencia' ocorrencia.id  %}">
                                     Concluir
                                   </button>
                                   <button type="button" id="btnCommentModal" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#comentarioModal" data-ocorrencia="{{ocorrencia.id}}" >Inserir comentário</button>
@@ -328,39 +324,35 @@
     {% block scripts %}
       
     <script>
-      const comentarioModal = document.getElementById('concluirModal');
-      const excluirModal = document.getElementById('excluirModal');
-      const concluirForm = document.getElementById('concluirForm');
-      const excluirForm = document.getElementById('excluirForm');
-      const btnConcluir = document.getElementById('btnConcluir');
-      const btnExcluir = document.getElementById('btnExcluir');
-      const osConcluir = document.getElementById('osConcluir');
-      const osExcluir = document.getElementById('osExcluir');
-      const btnCommentModal = document.getElementById('btnCommentModal');
-      const inputCommentOccorrencia = document.getElementById('id_ocorrencia');
-    
-      btnCommentModal.addEventListener('click', event => {
-        inputCommentOccorrencia.value = event.target.dataset.ocorrencia;
-      });
-    
-      btnConcluir.addEventListener('click', event => {
-        osConcluir.innerText = event.target.dataset.os;
-        concluirForm.action = event.target.dataset.url;
-      });
-    
-      btnExcluir.addEventListener('click', event => {
-        console.log(event.target.dataset.url);
-        osExcluir.innerText = event.target.dataset.os;
-        excluirForm.action = event.target.dataset.url;
-      });
-    
-      comentarioModal.addEventListener('hidden.bs.modal', event => {
-        inputCommentOccorrencia.value = '';
-      });
-    
-      excluirModal.addEventListener('hidden.bs.modal', event => {
-        inputCommentOccorrencia.value = '';
-      });
+      document.querySelectorAll('[data-bs-target="#comentarioModal"]').forEach(button => {
+    button.addEventListener('click', event => {
+        const ocorrenciaId = event.target.dataset.ocorrencia;
+        document.getElementById('id_ocorrencia').value = ocorrenciaId;
+    });
+});
+
+document.querySelectorAll('[data-bs-target="#concluirModal"]').forEach(button => {
+    button.addEventListener('click', event => {
+        document.getElementById('osConcluir').innerText = event.target.dataset.os;
+        document.getElementById('concluirForm').action = event.target.dataset.url;
+    });
+});
+
+document.querySelectorAll('[data-bs-target="#excluirModal"]').forEach(button => {
+    button.addEventListener('click', event => {
+        document.getElementById('osExcluir').innerText = event.target.dataset.os;
+        document.getElementById('excluirForm').action = event.target.dataset.url;
+    });
+});
+
+document.getElementById('comentarioModal').addEventListener('hidden.bs.modal', () => {
+    document.getElementById('id_ocorrencia').value = '';
+});
+
+document.getElementById('excluirModal').addEventListener('hidden.bs.modal', () => {
+    document.getElementById('id_ocorrencia').value = '';
+});
+
       
     </script>
     
