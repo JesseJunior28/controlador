@@ -52,22 +52,22 @@ class Ocorrencia(models.Model):
         CONCLUIDA = 'CONCLUIDA', 'Concluida'    
     unidade = models.ForeignKey(Unidade, on_delete=models.CASCADE, related_name="ocorrencia")
     local = models.ForeignKey(Local, on_delete= models.CASCADE, null=True, blank=True, related_name="ocorrencia")
+    titulo = models.CharField(max_length=30, verbose_name= "Título")
+    data_solicitacao = models.DateTimeField(null=True, blank= True, verbose_name= 'Data da Solicitação')
+    descricao = models.TextField('Descrição',blank=True, null=True)
     criticidade = models.CharField(
         max_length=20,
         choices=[('NORMAL', 'Normal'), ('URGENTE', 'Urgente'), ('EMERGENCIAL', 'Emergencial')],
         verbose_name= "Criticidade",
         default="NORMAL"
     )
-    titulo = models.CharField(max_length=30, verbose_name= "Título")
-    descricao = models.TextField(verbose_name="Descrição da Ocorrência")
-    data_solicitacao = models.DateTimeField(null=True, blank= True, verbose_name= 'Data da Solicitação')
     status = models.CharField(
         'Status',
         max_length=10,
         choices=StatusOcorrencia.choices,
         default=StatusOcorrencia.EM_ABERTO,
     )
-
+    
     @property
     def em_aberto(self):
         return self.status == self.StatusOcorrencia.EM_ABERTO

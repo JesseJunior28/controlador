@@ -37,11 +37,11 @@ def lista_ocorrencia(request):
         ocorrencias = ocorrencias.filter(data_abertura=request.GET.get('data_abertura'))
     if request.GET.get('data_solicitacao'):
         ocorrencias = ocorrencias.filter(data_solicitacao=request.GET.get('data_solicitacao'))
-    if request.GET.get('status'):
-        ocorrencias = ocorrencias.filter(status=request.GET.get('status'))
     if request.GET.get('status', Ocorrencia.StatusOcorrencia.EM_ABERTO):
         status = request.GET.get('status', Ocorrencia.StatusOcorrencia.EM_ABERTO)
         ocorrencias = ocorrencias.filter(status=status)
+ 
+    
     
     context = {
         "ocorrencias": ocorrencias,
