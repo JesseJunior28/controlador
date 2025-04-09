@@ -5,14 +5,14 @@ from django.contrib.admin.widgets import AdminDateWidget
 class OcorrenciaForm(forms.ModelForm):
     class Meta: 
         model = Ocorrencia
-        fields = ['unidade', 'local', 'criticidade', 'status', 'data_solicitacao']
+        fields = ['unidade', 'local', 'criticidade', 'status', 'data_solicitacao', 'descricao']
         widgets = {
             "unidade": forms.Select(attrs={'class': 'form-control'}),
             "local": forms.Select(attrs={'class': 'form.control'}),
             "criticidade": forms.Select(attrs={'class': 'form.control'}),
             "status": forms.Select(attrs={'class': 'form.control'}),
             "data_solicitacao": forms.TextInput(attrs={'class': 'datetime-local', 'type': 'date'}),
-            
+            "descricao": forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -23,7 +23,29 @@ class OcorrenciaForm(forms.ModelForm):
         self.fields['criticidade'].required = False
         self.fields['status'].empty_label = 'Status da Ocorência'
         self.fields['status'].required = False
-        
+        self.fields['descricao'].required = False
+
+class OcorrenciaFilterForm(forms.ModelForm):
+    class Meta: 
+        model = Ocorrencia
+        fields = ['unidade', 'local', 'criticidade', 'status', 'data_solicitacao']
+        widgets = {
+            "unidade": forms.Select(attrs={'class': 'form-control'}),
+            "local": forms.Select(attrs={'class': 'form.control'}),
+            "criticidade": forms.Select(attrs={'class': 'form.control'}),
+            "status": forms.Select(attrs={'class': 'form.control'}),
+            "data_solicitacao": forms.TextInput(attrs={'class': 'datetime-local', 'type': 'date'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(OcorrenciaFilterForm, self).__init__(*args, **kwargs)
+        self.fields['unidade'].required = False
+        self.fields['local'].empty_label = 'local'
+        self.fields['local'].required = False
+        self.fields['criticidade'].required = False
+        self.fields['status'].empty_label = 'Status da Ocorência'
+        self.fields['status'].required = False
+
 class ComentarioForm(forms.ModelForm):
     
     class Meta:
@@ -38,8 +60,7 @@ class PlantaoForm(forms.ModelForm):
         widgets = {
             "turno": forms.Select(attrs={'class': 'form-control'}),
             "inicio": forms.TextInput(attrs={'class': 'form-control', 'type': 'datetime-' })
-
-}
+        }
 
 class DataSolicitacaoForm(forms.ModelForm):
     class Meta:

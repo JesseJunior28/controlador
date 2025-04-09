@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render, redirect, reverse
 from .models import Ocorrencia, Plantao
-from .forms import OcorrenciaForm, ComentarioForm, OcorrenciaForm, PlantaoForm
+from .forms import OcorrenciaForm, ComentarioForm, OcorrenciaFilterForm, PlantaoForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from urllib.parse import urlencode
@@ -29,7 +29,7 @@ def lista_ocorrencia(request):
 
     ocorrencias = Ocorrencia.objects.all()
     em_aberto = ocorrencias.filter(status=Ocorrencia.StatusOcorrencia.EM_ABERTO).count()
-    form = OcorrenciaForm(request.GET, initial={'status': Ocorrencia.StatusOcorrencia.EM_ABERTO})
+    form = OcorrenciaFilterForm(request.GET, initial={'status': Ocorrencia.StatusOcorrencia.EM_ABERTO})
 
     if request.GET.get('unidade'):
         ocorrencias = ocorrencias.filter(unidade=request.GET.get('unidade'))
