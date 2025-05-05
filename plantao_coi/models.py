@@ -17,10 +17,29 @@ class DataSolicitacao(models.Model):
         return self.data.strftime("%d/%m/%Y")
 
 class Local(models.Model):   #locins
-    local = models.CharField(max_length=70, verbose_name= "Local")
+    TIPO_CHOICES = [
+        ('interno', 'Interno'),
+        ('externo', 'Externo'),
+    ]
+    
+    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES, default='interno')
+    
+    class Meta: 
+        verbose_name = 'Local'
 
-    def __str__(self):
-        return self.local
+class LocalInterno(Local):
+    planta = models.CharField(max_length=50)
+    ativo = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Local Interno'
+
+class LocalExterno(Local):
+    endereco = models.CharField(max_length=100)
+    localizacao = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name = 'Local Externo'
 
 class Comentario(models.Model):
     ocorrencia = models.ForeignKey('Ocorrencia', on_delete=models.CASCADE, related_name='comentarios')
@@ -44,7 +63,7 @@ class Plantao(models.Model):
         verbose_name = 'Plantão'
 
     def __str__(self):
-        return f'{self.usuario.username} - {self.inicio.strftime('%d/%m/%Y %H:%M') } - {self.turno}'
+        return f"{self.usuario.username} - {self.inicio.strftime('%d/%m/%Y %H:%M') } - {self.turno}"
 
 class Ocorrencia(models.Model):
     class StatusOcorrencia(models.TextChoices):
