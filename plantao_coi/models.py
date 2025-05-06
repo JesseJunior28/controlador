@@ -1,59 +1,85 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 
-# Create your models here.
 
 class Unidade(models.Model):
     nome = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
         return self.nome
+
 class DataSolicitacao(models.Model):
     data = models.DateField()
 
     def __str__(self):
         return self.data.strftime("%d/%m/%Y")
 
-class Local(models.Model):   #locins
-    TIPO_CHOICES = [
-        ('interno', 'Interno'),
-        ('externo', 'Externo'),
-    ]
-    
-    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES, default='interno')
-    
-    class Meta: 
-        verbose_name = 'Local'
+class Planta(models.Model):
+    nome = models.CharField(max_length=100)
 
-class LocalInterno(Local):
-    planta = models.CharField(max_length=50)
-    ativo = models.BooleanField(default=True)
+    def __str__(self):
+        return self.nome
+
+
+class Ativo(models.Model):
+    codigo = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.codigo
+
+
+class LocalExterno(models.Model):
+    nome = models.CharField(max_length=100)
+    localizacao = models.CharField(
+        "Localização",
+        max_length=200,
+        blank=True,
+        help_text="Localização do local"
+    )
+    endereco = models.CharField(
+        "Endereço",
+        max_length=300,
+        blank=True,
+        help_text="Endereço completo"
+    )
+
+    def __str__(self):
+        return self.nome
+
+
+class LocalInterno(models.Model):
+    planta = models.ForeignKey(
+        Planta,
+        on_delete=models.PROTECT,
+        related_name="locais_internos"
+    )
+    ativo = models.ForeignKey(
+        Ativo,
+        on_delete=models.PROTECT,
+        related_name="locais_internos"
+    )
 
     class Meta:
-        verbose_name = 'Local Interno'
-
-class LocalExterno(Local):
-    endereco = models.CharField(max_length=100)
-    localizacao = models.CharField(max_length=100)
-
-    class Meta:
-        verbose_name = 'Local Externo'
+        verbose_name = "Local Interno"
+        verbose_name_plural = "Locais Internos"
 
 class Comentario(models.Model):
     ocorrencia = models.ForeignKey('Ocorrencia', on_delete=models.CASCADE, related_name='comentarios')
     texto = models.TextField('Texto')
     data_criacao = models.DateTimeField('Criado em', auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="comentarios", verbose_name="Plantonista")
-    def __str__(self):
-        return f"Comentário de {self.autor} em {self.data_criacao.strftime('%d/%m/%Y %H:%M')}"
 
+    def __str__(self):
+        return f"Comentário de {self.user} em {self.data_criacao.strftime('%d/%m/%Y %H:%M')}"
 
 class Plantao(models.Model):
     class TurnoPlantao(models.TextChoices):
         DIURNO = 'DIURNO', 'Diurno'
         NOTURNO = 'NOTURNO', 'Noturno'
+
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     inicio = models.DateTimeField(default=timezone.now)
     turno = models.CharField(max_length=10, choices=TurnoPlantao.choices)
@@ -68,32 +94,75 @@ class Plantao(models.Model):
 class Ocorrencia(models.Model):
     class StatusOcorrencia(models.TextChoices):
         EM_ABERTO = 'EM_ABERTO', 'Em Aberto'
-        CONCLUIDA = 'CONCLUIDA', 'Concluida'    
-    unidade = models.ForeignKey(Unidade, on_delete=models.CASCADE, related_name="ocorrencia")
-    local = models.ForeignKey(Local, on_delete= models.CASCADE, null=True, blank=True, related_name="ocorrencia")
-    titulo = models.CharField(max_length=30, verbose_name= "Título")
-    data_solicitacao = models.DateTimeField(null=True, blank= True, verbose_name= 'Data da Solicitação')
-    descricao = models.TextField('Descrição',blank=True, null=True)
+        CONCLUIDA = 'CONCLUIDA', 'Concluída'
+
+    unidade = models.ForeignKey(
+        Unidade,
+        on_delete=models.CASCADE,
+        related_name="ocorrencias"
+    )
+
+    local_interno = models.ForeignKey(
+        'LocalInterno',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="ocorrencias_internas",
+        verbose_name="Local Interno"
+    )
+
+    local_externo = models.ForeignKey(
+        'LocalExterno',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="ocorrencias_externas",
+        verbose_name="Local Externo"
+    )
+
+    titulo = models.CharField(max_length=30, verbose_name="Título")
+
+    data_solicitacao = models.DateTimeField(
+        null=True, blank=True, verbose_name='Data da Solicitação'
+    )
+
+    descricao = models.TextField('Descrição', blank=True, null=True)
+
     criticidade = models.CharField(
         max_length=20,
-        choices=[('NORMAL', 'Normal'), ('URGENTE', 'Urgente'), ('EMERGENCIAL', 'Emergencial')],
-        verbose_name= "Criticidade",
+        choices=[
+            ('NORMAL', 'Normal'),
+            ('URGENTE', 'Urgente'),
+            ('EMERGENCIAL', 'Emergencial')
+        ],
+        verbose_name="Criticidade",
         default="NORMAL"
     )
+
     status = models.CharField(
         'Status',
         max_length=10,
         choices=StatusOcorrencia.choices,
         default=StatusOcorrencia.EM_ABERTO,
     )
-    
+
+    def clean(self):
+        super().clean()
+        if self.local_interno and self.local_externo:
+            raise ValidationError("Preencha apenas um dos campos: Local Interno ou Local Externo.")
+        if not self.local_interno and not self.local_externo:
+            raise ValidationError("É necessário preencher um dos campos: Local Interno ou Local Externo.")
+
     @property
     def em_aberto(self):
         return self.status == self.StatusOcorrencia.EM_ABERTO
-    
+
     @property
     def concluida(self):
         return self.status == self.StatusOcorrencia.CONCLUIDA
 
+    def __str__(self):
+        local = self.local_interno or self.local_externo or "Sem local"
+        return f"{self.get_status_display()} em {local}: {self.titulo}"
 
-    
+

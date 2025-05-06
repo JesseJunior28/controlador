@@ -94,7 +94,7 @@
                 >
                   <td>{{ ocorrencia.id|default:"" }}</td>
                   <td>{{ ocorrencia.unidade|default:"" }}</td>
-                  <td>{{ ocorrencia.local|default:"Sem OS" }}</td>
+                  <td>{{ ocorrencia.local_interno|default:"Sem local" }}</td>
                   <td>
                     {% if ocorrencia.criticidade == 'Alta' %}
                     <span class="badge bg-danger">{{ ocorrencia.criticidade }}</span>
@@ -154,8 +154,12 @@
                                   {{ocorrencia.unidade }}
                                 </p>
                                 <p class="card-text">
-                                  <strong>Local:</strong> 
-                                  {{ocorrencia.local }}
+                                  <strong>Local:</strong>
+                                  {% if ocorrencia.local_interno %}
+                                      Interno - {{ ocorrencia.local_interno.planta.nome }} / {{ ocorrencia.local_interno.ativo.codigo }}
+                                  {% else %}
+                                      Não informado
+                                  {% endif %}
                                 </p>
                                 <p class="card-text">
                                   <strong>Data da Solicitação:</strong> 
@@ -322,5 +326,4 @@
     {% block extra_js %}
     <script src="{% static 'js/lista_ocorrencia.js' %}"></script>
     {% endblock %}
-    
-    
+

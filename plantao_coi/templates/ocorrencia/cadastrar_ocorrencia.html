@@ -5,16 +5,65 @@
 {% load crispy_forms_tags %}
 
 {% block conteudo %}
-<div class="row">
-
-    <div class="col-6">
-        <h1>Cadastrar Ocorrência</h1>
-        <form method="post" action="">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <a href="{% url 'lista_ocorrencia' %}" class="btn btn-secondary">Cancelar</a>
-            <button type="submit" class="btn btn-primary">Salvar</button>
-        </form>
-    </div>
-</div>
+<div class="col-6">
+    <h1>Cadastrar Ocorrência</h1>
+    <form method="post" action="">
+      {% csrf_token %}
+  
+      {{ form.unidade|as_crispy_field }}
+  
+      <div class="mb-3">
+        <label for="id_tipo_local" class="form-label">Tipo de Local</label>
+        <select id="id_tipo_local" name="tipo_local" class="form-select">
+          <option value="">-- Selecione --</option>
+          <option value="interno">Interno</option>
+          <option value="externo">Externo</option>
+        </select>
+      </div>
+  
+      <!-- Campos para Local Interno -->
+      <div id="campos_interno" style="display: none;">
+        {{ form.planta|as_crispy_field }}
+        {{ form.ativo|as_crispy_field }}
+      </div>
+  
+      <!-- Campos para Local Externo -->
+      <div id="campos_externo" style="display: none;">
+        {{ form.endereco|as_crispy_field }}
+        {{ form.localizacao|as_crispy_field }}
+      </div>
+  
+      {{ form.criticidade|as_crispy_field }}
+      {{ form.status|as_crispy_field }}
+      {{ form.data_solicitacao|as_crispy_field }}
+      {{ form.descricao|as_crispy_field }}
+  
+      <a href="{% url 'lista_ocorrencia' %}" class="btn btn-secondary">Cancelar</a>
+      <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+  </div>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const tipo = document.getElementById('id_tipo_local');
+      const blocoInt = document.getElementById('campos_interno');
+      const blocoExt = document.getElementById('campos_externo');
+  
+      function toggle() {
+        if (tipo.value === 'interno') {
+          blocoInt.style.display = 'block';
+          blocoExt.style.display = 'none';
+        } else if (tipo.value === 'externo') {
+          blocoInt.style.display = 'none';
+          blocoExt.style.display = 'block';
+        } else {
+          blocoInt.style.display = blocoExt.style.display = 'none';
+        }
+      }
+  
+      tipo.addEventListener('change', toggle);
+      toggle();  // inicializa o estado
+    });
+  </script>
+  
 {% endblock %}
