@@ -55,28 +55,31 @@ def lista_ocorrencia(request):
 
 @login_required
 def cadastrar_ocorrencia(request):
-
     agora = datetime.now().time()
     hoje = datetime.now().date()
-    
+
     if time(6, 0) <= agora < time(18, 0):
         plantao = Plantao.objects.filter(inicio__date=hoje, turno=Plantao.TurnoPlantao.DIURNO).first()
     else:
         plantao = Plantao.objects.filter(inicio__date=hoje, turno=Plantao.TurnoPlantao.NOTURNO).first()
 
     if not plantao:
-        messages.warning(request, f'Nenhum plantão iniciado, favor iniciar o plantão!')
+        messages.warning(request, 'Nenhum plantão iniciado, favor iniciar o plantão!')
         return redirect('iniciar_plantao')
-    
+
     if request.method == "POST":
         form = OcorrenciaForm(request.POST)
         if form.is_valid():
             ocorrencia = form.save()
             messages.success(request, 'Ocorrência cadastrada com sucesso!')
             return redirect("lista_ocorrencia")
+        else:
+            # Adicione esta linha para imprimir os erros no console
+            print(form.errors)
+            # Renderize o formulário novamente com os erros
+            return render(request, "ocorrencia/cadastrar_ocorrencia.html", {"form": form})
     else:
-        form = OcorrenciaForm(initial={'plantonista': request.user, 'plantao': plantao})
-        
+        form = OcorrenciaForm()  # Instancia o form sem dados iniciais
     return render(request, "ocorrencia/cadastrar_ocorrencia.html", {"form": form})
 
 def editar_ocorrencia(request, ocorrencia_id):

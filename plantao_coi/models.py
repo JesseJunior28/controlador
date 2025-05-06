@@ -146,12 +146,7 @@ class Ocorrencia(models.Model):
         default=StatusOcorrencia.EM_ABERTO,
     )
 
-    def clean(self):
-        super().clean()
-        if self.local_interno and self.local_externo:
-            raise ValidationError("Preencha apenas um dos campos: Local Interno ou Local Externo.")
-        if not self.local_interno and not self.local_externo:
-            raise ValidationError("É necessário preencher um dos campos: Local Interno ou Local Externo.")
+
 
     @property
     def em_aberto(self):

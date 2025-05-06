@@ -1,5 +1,5 @@
 from django import forms
-from .models import Ocorrencia, Plantao, Comentario, DataSolicitacao, LocalInterno, Planta, Ativo
+from .models import Ocorrencia, Plantao, Comentario, DataSolicitacao, Planta, Ativo
 from django.contrib.admin.widgets import AdminDateWidget
 
 class OcorrenciaForm(forms.ModelForm):
@@ -40,13 +40,14 @@ class OcorrenciaForm(forms.ModelForm):
     class Meta:
         model = Ocorrencia
         fields = [
-            'unidade', 'tipo_local',
+            'titulo', 'unidade', 'tipo_local', 
             'planta', 'ativo',
             'endereco', 'localizacao',
             'criticidade', 'status',
             'data_solicitacao', 'descricao'
         ]
         widgets = {
+            'titulo': forms.TextInput(attrs={'class': 'form-control'}), 
             'unidade': forms.Select(attrs={'class': 'form-control'}),
             'criticidade': forms.Select(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
@@ -66,10 +67,7 @@ class OcorrenciaForm(forms.ModelForm):
         return cd
 
     def save(self, commit=True):
-        # 1) salva a ocorrência sem local ainda
         ocorrencia = super().save(commit=False)
-
-        # 2) com base no tipo, crie ou recupere o LocalInterno/LocalExterno
         from .models import LocalInterno, LocalExterno
 
         if self.cleaned_data['tipo_local'] == 'interno':
