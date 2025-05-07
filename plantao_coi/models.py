@@ -115,7 +115,7 @@ class Ocorrencia(models.Model):
         'LocalExterno',
         on_delete=models.CASCADE,
         null=True,
-        blank=True,
+        blank=False,
         related_name="ocorrencias_externas",
         verbose_name="Local Externo"
     )
@@ -123,13 +123,14 @@ class Ocorrencia(models.Model):
     titulo = models.CharField(max_length=30, verbose_name="Título")
 
     data_solicitacao = models.DateTimeField(
-        null=True, blank=True, verbose_name='Data da Solicitação'
+        null=False, blank=False, verbose_name='Data da Solicitação'
     )
 
-    descricao = models.TextField('Descrição', blank=True, null=True)
+    descricao = models.TextField('Descrição', blank=False, null=False)
 
     criticidade = models.CharField(
         max_length=20,
+        blank=False,
         choices=[
             ('NORMAL', 'Normal'),
             ('URGENTE', 'Urgente'),
@@ -137,11 +138,13 @@ class Ocorrencia(models.Model):
         ],
         verbose_name="Criticidade",
         default="NORMAL"
+
     )
 
     status = models.CharField(
         'Status',
         max_length=10,
+        blank=False,
         choices=StatusOcorrencia.choices,
         default=StatusOcorrencia.EM_ABERTO,
     )
