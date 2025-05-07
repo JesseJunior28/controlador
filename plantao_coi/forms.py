@@ -71,25 +71,56 @@ class OcorrenciaForm(forms.ModelForm):
         from .models import LocalInterno, LocalExterno
 
         if self.cleaned_data['tipo_local'] == 'interno':
-            li = LocalInterno.objects.create(
-                planta=self.cleaned_data['planta'],
-                ativo=self.cleaned_data['ativo']
-            )
+            if ocorrencia.local_interno:
+                li = ocorrencia.local_interno
+                li.planta = self.cleaned_data['planta']
+                li.ativo = self.cleaned_data['ativo']
+                li.save()
+            else:
+                li = LocalInterno.objects.create(
+                    planta=self.cleaned_data['planta'],
+                    ativo=self.cleaned_data['ativo']
+                )
             ocorrencia.local_interno = li
             ocorrencia.local_externo = None
+
         else:
-            le = LocalExterno.objects.create(
-                nome="Externo",  # ou outro valor fixo
-                localizacao=self.cleaned_data['localizacao'],
-                endereco=self.cleaned_data['endereco']
-            )
+            if ocorrencia.local_externo:
+                le = ocorrencia.local_externo
+                le.nome = self.cleaned_data['endereco']
+                le.localizacao = self.cleaned_data['localizacao']
+                le.save()
+            else:
+                le = LocalExterno.objects.create(
+                    nome=self.cleaned_data['endereco'],
+                    localizacao=self.cleaned_data['localizacao']
+                )
             ocorrencia.local_externo = le
             ocorrencia.local_interno = None
-
         if commit:
             ocorrencia.save()
         return ocorrencia
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        instance = kwargs.get('instance')
+        tipo_local_val = ''
 
+        if instance:
+            if instance.local_interno:
+                tipo_local_val = 'interno'
+                self.fields['tipo_local'].initial = 'interno'
+                self.fields['planta'].initial = instance.local_interno.planta
+                self.fields['ativo'].initial = instance.local_interno.ativo
+            elif instance.local_externo:
+                tipo_local_val = 'externo'
+                self.fields['tipo_local'].initial = 'externo'
+                self.fields['endereco'].initial = instance.local_externo.nome
+                self.fields['localizacao'].initial = instance.local_externo.localizacao
+
+        # Adicionar o atributo data-initial ao widget do tipo_local
+        self.fields['tipo_local'].widget.attrs['data-initial'] = tipo_local_val
+   
 
 class PlantaoForm(forms.ModelForm):
     class Meta:

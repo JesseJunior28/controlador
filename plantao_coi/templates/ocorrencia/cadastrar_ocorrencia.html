@@ -23,19 +23,15 @@
     {% endif %}
 
     {{ form.titulo|as_crispy_field }}
-
-
     {{ form.unidade|as_crispy_field }}
-
-    {# agora renderizamos tipo_local via crispy #}
     {{ form.tipo_local|as_crispy_field }}
 
-    <div id="local_interno" style="display:none;">
+    <div class="local-interno" style="display:none;">
       {{ form.planta|as_crispy_field }}
       {{ form.ativo|as_crispy_field }}
     </div>
 
-    <div id="local_externo" style="display:none;">
+    <div class="local-externo" style="display:none;">
       {{ form.endereco|as_crispy_field }}
       {{ form.localizacao|as_crispy_field }}
     </div>
@@ -49,9 +45,9 @@
       <a href="{% url 'lista_ocorrencia' %}" class="btn btn-secondary">Cancelar</a>
       <button type="submit" class="btn btn-primary">Salvar</button>
     </div>
-    <script src = "{% static 'js/cadastrar_ocorrencia.js' %}"></script>
+
+    <script src="{% static 'js/form_ocorrencia.js' %}"></script>
   </form>
 </div>
-
 {% endblock %}
 
