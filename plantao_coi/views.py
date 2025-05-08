@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render, redirect, reverse
-from .models import Ocorrencia, Plantao
+from .models import Ocorrencia, Plantao, Comentario
 from .forms import OcorrenciaForm, ComentarioForm, OcorrenciaFilterForm, PlantaoForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -103,7 +103,6 @@ def excluir_ocorrencia(request, ocorrencia_id):
 
 
 def adicionar_comentario(request):
-    
     if request.method == 'POST':
         form = ComentarioForm(request.POST)
         if form.is_valid():
@@ -120,11 +119,33 @@ def adicionar_comentario(request):
 def concluir_ocorrencia(request, ocorrencia_id):
     ocorrencia = get_object_or_404(Ocorrencia, pk=ocorrencia_id)
 
-    ocorrencia.status = Ocorrencia.StatusOcorrencia.CONCLUIDA
+    ocorrencia.status = Ocorrencia.CONCLUIDA
     ocorrencia.save()
-    messages.success(request, f'Ocorrência {ocorrencia.id} concluída com sucesso!')
+    comentario = Comentario(
+        ocorrencia=ocorrencia,
+        texto="%s Concluiu a ocorrência" % request.user.username,
+        user=request.user
+    )
+    comentario.save()
+    messages.success(request, 'Ocorrência {} concluída com sucesso!'.format(ocorrencia.id))
     
     return redirect('lista_ocorrencia')
+def cancelar_ocorrencia(request, ocorrencia_id):
+    ocorrencia = get_object_or_404(Ocorrencia, pk=ocorrencia_id)
+
+    ocorrencia.status = Ocorrencia.CANCELADA
+    ocorrencia.save()
+    comentario = Comentario(
+        ocorrencia=ocorrencia,
+        texto=request.POST.get('comentario',''),
+        user=request.user
+    )
+    comentario.save()
+    messages.success(request, 'Ocorrência {} cancelada com sucesso!'.format(ocorrencia.ordem_de_servico))
+    
+    return redirect('lista_ocorrencia')
+
+
 
 
 @login_required

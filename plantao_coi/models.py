@@ -75,8 +75,18 @@ class Comentario(models.Model):
     data_criacao = models.DateTimeField('Criado em', auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="comentarios", verbose_name="Plantonista")
 
+    class Meta:
+        verbose_name = 'Comentário'
+        verbose_name_plural = 'Comentários'
+        ordering = ('-data_criacao',)
+        get_latest_by = '-data_criacao'
+
     def __str__(self):
-        return f"Comentário de {self.user} em {self.data_criacao.strftime('%d/%m/%Y %H:%M')}"
+        return "Comentário de {} em {}".format(
+            self.autor,
+            self.data_criacao.strftime('%d/%m/%Y %H:%M')
+        )
+
 
 class Plantao(models.Model):
     class TurnoPlantao(models.TextChoices):
@@ -161,6 +171,7 @@ class Ocorrencia(models.Model):
     @property
     def concluida(self):
         return self.status == self.StatusOcorrencia.CONCLUIDA
+
 
     def __str__(self):
         local = self.local_interno or self.local_externo or "Sem local"

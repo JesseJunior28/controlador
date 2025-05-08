@@ -182,6 +182,17 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
+    const concluirModal = document.getElementById('concluirModal');
+        if (concluirModal) {
+        concluirModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const url = button.getAttribute('data-url');
+        const link = document.getElementById('confirmarConclusao');
+        if (link && url) {
+            link.setAttribute('href', url);
+        }
+    });
+}
 
     // Verifica atualizações a cada 30 segundos
     setInterval(checkForUpdates, 30000);
