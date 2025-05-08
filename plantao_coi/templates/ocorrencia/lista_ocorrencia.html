@@ -124,7 +124,7 @@
                     </a>
                     <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#excluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'excluir_ocorrencia' ocorrencia.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="Excluir ocorrência" data-confirm="Tem certeza que deseja excluir esta ocorrência?">
                     <i class="bi bi-trash"></i>
-                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#concluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'concluir_ocorrencia' ocorrencia.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="Concluir ocorrência" data-confirm="Tem certeza que deseja concluir esta ocorrência?">
+                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#concluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'concluir_ocorrencia' ocorrencia.id %}"  data-bs-placement="top" title="Concluir ocorrência" data-confirm="Tem certeza que deseja concluir esta ocorrência?">
                     <i class="bi bi-check-circle"></i>
                     <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#comentarioModal" data-ocorrencia="{{ocorrencia.id}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar comentário">
                     <i class="bi bi-chat"></i>
@@ -345,39 +345,66 @@ role="dialog" aria-labelledby="comentarioModalLabel" aria-hidden="true">
 {% endblock %}
 
 {% block script %}
-  
 <script>
-  const comentarioModal = document.getElementById('concluirModal');
-  const cancelarModal = document.getElementById('cancelarModal');
-  const excluirModal = document.getElementById('excluirModal');
-  const concluirForm = document.getElementById('concluirForm');
-  const excluirForm = document.getElementById('excluirForm');
-  const osConcluir = document.getElementById('osConcluir');
-  const osCancelar = document.getElementById('osCancelar');
-  const osExcluir = document.getElementById('osExcluir');
-  const inputCommentOccorrencia = document.getElementById('id_ocorrencia');
-
-  $('.btnCommentModal').click(event => {
-    console.log(event.target.dataset.ocorrencia);
-    inputCommentOccorrencia.value = event.target.dataset.ocorrencia;
-  });
-
-  $('.btnConcluir').click(event => {
-    osConcluir.innerText = event.target.dataset.os;
-    concluirForm.action = event.target.dataset.url;
-  });
-
-  $('.btnCancelar').click(event => {
-    osCancelar.innerText = event.target.dataset.os;
-    cancelarForm.action = event.target.dataset.url;
-  });
-
-  $('.btnExcluir').click(event => {
-    console.log("tentando excluir")
-    osExcluir.innerText = event.target.dataset.os;
-    excluirForm.action = event.target.dataset.url;
-  });
+  document.addEventListener('DOMContentLoaded', function () {
+    // 1> Inicializa todos os tooltips do Bootstrap
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+      new bootstrap.Tooltip(el);
+    });
   
-</script>
+    // 2> Modal de Exclusão
+    const excluirModal = document.getElementById('excluirModal');
+    const excluirForm = document.getElementById('excluirForm');
+    const osExcluir = document.getElementById('osExcluir');
+  
+    if (excluirModal) {
+      excluirModal.addEventListener('show.bs.modal', function (event) {
+        const btn = event.relatedTarget;
+        const os = btn.getAttribute('data-os');
+        const url = btn.getAttribute('data-url');
+        osExcluir.innerText = os;
+        excluirForm.action = url;
+      });
+      excluirModal.addEventListener('hidden.bs.modal', function () {
+        osExcluir.innerText = '';
+        excluirForm.action = '#';
+      });
+    }
+  
+    // 3> Modal de Conclusão
+    const concluirModal = document.getElementById('concluirModal');
+    const concluirForm = document.getElementById('concluirForm');
+    const osConcluir = document.getElementById('osConcluir');
+  
+    if (concluirModal) {
+      concluirModal.addEventListener('show.bs.modal', function (event) {
+        const btn = event.relatedTarget;
+        const os = btn.getAttribute('data-os');
+        const url = btn.getAttribute('data-url');
+        osConcluir.innerText = os;
+        concluirForm.action = url;
+      });
+      concluirModal.addEventListener('hidden.bs.modal', function () {
+        osConcluir.innerText = '';
+        concluirForm.action = '#';
+      });
+    }
+  
+    // 4> Modal de Comentário
+    const comentarioModal = document.getElementById('comentarioModal');
+    const inputCommentOccorrencia = document.getElementById('id_ocorrencia');
+  
+    if (comentarioModal) {
+      comentarioModal.addEventListener('show.bs.modal', function (event) {
+        const btn = event.relatedTarget;
+        const occId = btn.getAttribute('data-ocorrencia');
+        inputCommentOccorrencia.value = occId;
+      });
+      comentarioModal.addEventListener('hidden.bs.modal', function () {
+        inputCommentOccorrencia.value = '';
+      });
+    }});
+
+  </script>
 
 {% endblock %}
