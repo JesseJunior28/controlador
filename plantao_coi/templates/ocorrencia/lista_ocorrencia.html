@@ -119,19 +119,15 @@
                     </button>
                     {% if ocorrencia.em_aberto %}
 
-                    <a
-                      href="{% url 'editar_ocorrencia' ocorrencia.id %}"
-                      class="btn btn-secondary btn-sm"
-                      >Editar</a
-                    >
-
-                    <button type="button" id="btnExcluir" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#excluirModal" data-os="{{ocorrencia.ordem_de_servico}}" data-url="{% url 'excluir_ocorrencia' ocorrencia.id %}">
-                      Excluir
-                    </button>
-                    <button type="button" id="btnConcluir" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#concluirModal" data-os="{{ocorrencia.ordem_de_servico}}" data-url="{% url 'concluir_ocorrencia' ocorrencia.id  %}">
-                      Concluir
-                    </button>
-                    <button type="button" id="btnCommentModal" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#comentarioModal" data-ocorrencia="{{ocorrencia.id}}" >Inserir comentário</button>
+                    <a href="{% url 'editar_ocorrencia' ocorrencia.id %}" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar ocorrência">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#excluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'excluir_ocorrencia' ocorrencia.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="Excluir ocorrência" data-confirm="Tem certeza que deseja excluir esta ocorrência?">
+                    <i class="bi bi-trash"></i>
+                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#concluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'concluir_ocorrencia' ocorrencia.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="Concluir ocorrência" data-confirm="Tem certeza que deseja concluir esta ocorrência?">
+                    <i class="bi bi-check-circle"></i>
+                    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#comentarioModal" data-ocorrencia="{{ocorrencia.id}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar comentário">
+                    <i class="bi bi-chat"></i>
                     {% endif %}
                   </div>
                 </td>
@@ -147,7 +143,7 @@
                       <div class="card">
                         <div class="card-body">
                           <h5 class="card-title">
-                            Detalhes da Ocorrência OS: {{ ocorrencia.ordem_de_servico }}
+                            Detalhes da Ocorrência OS: {{ ocorrencia.id }}
                           </h5>
                           <div class="row">
                             <div class="col-md-4">
@@ -222,46 +218,8 @@
                             </div>
                           </div>
                         </div>
-
                       </div>
                     </div>
-
-                    <div class="row mt-2">
-                      <div class="col text-end">
-                        <div class="btn-group" role="group">
-                          {% if not ocorrencia.conluida %}
-
-                          {% if ocorrencias.editar_ocorrencia %}
-                          <a
-                            href="{% url 'editar_ocorrencia' ocorrencia.id %}"
-                            class="btn btn-secondary btn-sm"
-                            >Editar</a
-                          >
-                          {% endif %}
-                          
-                          {% if ocorrencias.cancelar_ocorrencia %}
-                          <button type="button" class="btnCancelar btn btn-sm btn-danger" data-toggle="modal" data-target="#cancelarModal" data-os="{{ocorrencia.id}}" data-url="{% url 'cancelar_ocorrencia' ocorrencia.id %}">
-                            Cancelar
-                          </button>
-                          {% endif %}
-                          
-                          {% if ocorrencias.concluir_ocorrencia %}
-                          <button type="button" class="btnConcluir btn btn-sm btn-warning" data-toggle="modal" data-target="#concluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'concluir_ocorrencia' ocorrencia.id  %}">
-                            Concluir
-                          </button>
-                          {% endif %}
-                          
-                          {% if ocorrencias.add_comentario %}
-                          <button type="button" class="btnCommentModal btn btn-primary btn-sm" data-toggle="modal" data-target="#comentarioModal" data-ocorrencia="{{ocorrencia.id}}" >Inserir comentário</button>
-                          {% endif %}
-                          
-                          {% else %}
-                          <button type="button" class="btnCommentModal btn btn-primary btn-sm" data-toggle="modal" data-target="#comentarioModal" data-ocorrencia="{{ocorrencia.id}}" >Inserir comentário</button>
-                          {% endif %}
-                        </div>
-                      </div>
-                    </div>
-
                   </div>
                 </div>
               </div>
@@ -418,20 +376,6 @@ role="dialog" aria-labelledby="comentarioModalLabel" aria-hidden="true">
     console.log("tentando excluir")
     osExcluir.innerText = event.target.dataset.os;
     excluirForm.action = event.target.dataset.url;
-  });
-
-  comentarioModal.addEventListener('hidden.bs.modal', event => {
-    inputCommentOccorrencia.value = '';
-  });
-
-  excluirModal.addEventListener('hidden.bs.modal', event => {
-    osExcluir.innerText = '';
-    excluirForm.action = '#';
-  });
-
-  cancelarModal.addEventListener('hidden.bs.modal', event => {
-    osCancelar.innerText = '';
-    cancelarForm.action = '#';
   });
   
 </script>

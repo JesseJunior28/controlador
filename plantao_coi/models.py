@@ -109,8 +109,6 @@ class Ocorrencia(models.Model):
         EM_ABERTO = 'EM_ABERTO', 'Em Aberto'
         CONCLUIDA = 'CONCLUIDA', 'Concluída'
         
-    ordem_de_servico = models.IntegerField('OS')
-
 
     unidade = models.ForeignKey(
         Unidade,

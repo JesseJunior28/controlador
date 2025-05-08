@@ -124,6 +124,21 @@ def concluir_ocorrencia(request, ocorrencia_id):
     
     return redirect('lista_ocorrencia')
 
+def cancelar_ocorrencia(request, ocorrencia_id):
+    ocorrencia = get_object_or_404(Ocorrencia, pk=ocorrencia_id)
+
+    ocorrencia.status = Ocorrencia.CANCELADA
+    ocorrencia.save()
+    comentario = Comentario(
+        ocorrencia=ocorrencia,
+        texto=request.POST.get('comentario',''),
+        user=request.user
+    )
+    comentario.save()
+    messages.success(request, 'Ocorrência {} cancelada com sucesso!'.format(ocorrencia.ordem_de_servico))
+    
+    return redirect('lista_ocorrencia')
+
 @login_required
 def iniciar_plantao(request):
     if request.method == 'POST':
