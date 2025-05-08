@@ -94,7 +94,7 @@
                 >
                   <td>{{ ocorrencia.id|default:"" }}</td>
                   <td>{{ ocorrencia.unidade|default:"" }}</td>
-                  <td>{{ ocorrencia.local_interno|default:"Sem local" }}</td>
+                  <td>{{ ocorrencia.local_interno|default:"Externo" }}</td>
                   <td>
                     {% if ocorrencia.criticidade == 'Alta' %}
                     <span class="badge bg-danger">{{ ocorrencia.criticidade }}</span>

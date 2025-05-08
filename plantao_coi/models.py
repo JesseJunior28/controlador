@@ -65,6 +65,9 @@ class LocalInterno(models.Model):
     class Meta:
         verbose_name = "Local Interno"
         verbose_name_plural = "Locais Internos"
+        
+    def __str__(self):
+        return f'{self.planta} - {self.ativo}'
 
 class Comentario(models.Model):
     ocorrencia = models.ForeignKey('Ocorrencia', on_delete=models.CASCADE, related_name='comentarios')
