@@ -156,7 +156,12 @@ class ComentarioForm(forms.ModelForm):
     
     class Meta:
         model = Comentario
-        fields = ['texto', 'user', 'ocorrencia']
+        fields = ['texto', 'user', 'ocorrencia', ]
+    
+    def __init__(self, *args):
+        super(ComentarioForm, self).__init__(*args)
+        self.fields['texto'].widget.attrs.update({'class': 'form-control', 'rows': 4})
+        self.fields['user'].widget.attrs.update({'class': 'form-control'})        
 
 class DataSolicitacaoForm(forms.ModelForm):
     class Meta:

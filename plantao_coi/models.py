@@ -70,22 +70,36 @@ class LocalInterno(models.Model):
         return f'{self.planta} - {self.ativo}'
 
 class Comentario(models.Model):
-    ocorrencia = models.ForeignKey('Ocorrencia', on_delete=models.CASCADE, related_name='comentarios')
+    ocorrencia = models.ForeignKey(
+        'Ocorrencia',
+        on_delete=models.CASCADE,
+        related_name='comentarios'
+    )
     texto = models.TextField('Texto')
     data_criacao = models.DateTimeField('Criado em', auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="comentarios", verbose_name="Plantonista")
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="comentarios",
+        verbose_name="Plantonista"
+    )
 
     class Meta:
         verbose_name = 'Comentário'
         verbose_name_plural = 'Comentários'
         ordering = ('-data_criacao',)
-        get_latest_by = '-data_criacao'
+        get_latest_by = 'data_criacao'
+
+    @property
+    def autor(self):
+        # Esse alias permite usar comentario.autor no template
+        return self.user.username if self.user else "Anônimo"
 
     def __str__(self):
-        return "Comentário de {} em {}".format(
-            self.autor,
-            self.data_criacao.strftime('%d/%m/%Y %H:%M')
-        )
+        # Use self.autor aqui
+        return f"Comentário de {self.autor} em {self.data_criacao:%d/%m/%Y %H:%M}"
+
 
 
 class Plantao(models.Model):

@@ -73,7 +73,7 @@ def cadastrar_ocorrencia(request):
         form = OcorrenciaForm(request.POST)
         if form.is_valid():
             ocorrencia = form.save()
-            messages.success(request, f'Ocorrência {ocorrencia.ordem_de_servico} cadastrada com sucesso!')
+            messages.success(request, f'Ocorrência {ocorrencia.id} cadastrada com sucesso!')
             return redirect("lista_ocorrencia")
     else:
         form = OcorrenciaForm(initial={'plantonista': request.user, 'plantao': plantao})
@@ -86,7 +86,7 @@ def editar_ocorrencia(request, ocorrencia_id):
         form = OcorrenciaForm(request.POST, instance=ocorrencia)
         if form.is_valid():
             form.save()
-            messages.success(request, f'Ocorrência {ocorrencia.ordem_de_servico} editada com sucesso!')
+            messages.success(request, f'Ocorrência {ocorrencia.id} editada com sucesso!')
             return redirect('lista_ocorrencia')
     else:
         form = OcorrenciaForm(instance=ocorrencia)
@@ -101,17 +101,17 @@ def excluir_ocorrencia(request, ocorrencia_id):
 
 
 def adicionar_comentario(request):
-    
     if request.method == 'POST':
         form = ComentarioForm(request.POST)
         if form.is_valid():
-            comentario = form.save()
-            base_url = reverse('lista_ocorrencia') # Obtém a URL base
-            query_string = urlencode({'ocorrencia_id': comentario.ocorrencia.id }) # Cria a query string
+            comentario = form.save(commit=False)
+            comentario.user = request.user  # Associa o usuário logado
+            comentario.save()
+            base_url = reverse('lista_ocorrencia')
+            query_string = urlencode({'ocorrencia_id': comentario.ocorrencia.id})
             url = f'{base_url}?{query_string}'
-            messages.success(request, f'Comentário adicionado com sucesso!')
+            messages.success(request, 'Comentário adicionado com sucesso!')
             return redirect(url)
-        return redirect('lista_ocorrencia')
     return redirect('lista_ocorrencia')
 
 
@@ -120,7 +120,7 @@ def concluir_ocorrencia(request, ocorrencia_id):
 
     ocorrencia.status = Ocorrencia.StatusOcorrencia.CONCLUIDA
     ocorrencia.save()
-    messages.success(request, f'Ocorrência {ocorrencia.ordem_de_servico} concluída com sucesso!')
+    messages.success(request, f'Ocorrência {ocorrencia.id} concluída com sucesso!')
     
     return redirect('lista_ocorrencia')
 
@@ -135,7 +135,7 @@ def cancelar_ocorrencia(request, ocorrencia_id):
         user=request.user
     )
     comentario.save()
-    messages.success(request, 'Ocorrência {} cancelada com sucesso!'.format(ocorrencia.ordem_de_servico))
+    messages.success(request, 'Ocorrência {} cancelada com sucesso!'.format(ocorrencia.id))
     
     return redirect('lista_ocorrencia')
 
