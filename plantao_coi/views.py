@@ -55,31 +55,29 @@ def lista_ocorrencia(request):
 
 @login_required
 def cadastrar_ocorrencia(request):
+
     agora = datetime.now().time()
     hoje = datetime.now().date()
-
+    
     if time(6, 0) <= agora < time(18, 0):
         plantao = Plantao.objects.filter(inicio__date=hoje, turno=Plantao.TurnoPlantao.DIURNO).first()
     else:
         plantao = Plantao.objects.filter(inicio__date=hoje, turno=Plantao.TurnoPlantao.NOTURNO).first()
 
     if not plantao:
-        messages.warning(request, 'Nenhum plantão iniciado, favor iniciar o plantão!')
+        messages.warning(request, f'Nenhum plantão iniciado, favor iniciar o plantão!')
         return redirect('iniciar_plantao')
+    
 
     if request.method == "POST":
         form = OcorrenciaForm(request.POST)
         if form.is_valid():
             ocorrencia = form.save()
-            messages.success(request, 'Ocorrência cadastrada com sucesso!')
+            messages.success(request, f'Ocorrência {ocorrencia.ordem_de_servico} cadastrada com sucesso!')
             return redirect("lista_ocorrencia")
-        else:
-            # Adicione esta linha para imprimir os erros no console
-            print(form.errors)
-            # Renderize o formulário novamente com os erros
-            return render(request, "ocorrencia/cadastrar_ocorrencia.html", {"form": form})
     else:
-        form = OcorrenciaForm()  # Instancia o form sem dados iniciais
+        form = OcorrenciaForm(initial={'plantonista': request.user, 'plantao': plantao})
+        
     return render(request, "ocorrencia/cadastrar_ocorrencia.html", {"form": form})
 
 def editar_ocorrencia(request, ocorrencia_id):
@@ -88,7 +86,7 @@ def editar_ocorrencia(request, ocorrencia_id):
         form = OcorrenciaForm(request.POST, instance=ocorrencia)
         if form.is_valid():
             form.save()
-            messages.success(request, f'Ocorrência {ocorrencia.id} editada com sucesso!')
+            messages.success(request, f'Ocorrência {ocorrencia.ordem_de_servico} editada com sucesso!')
             return redirect('lista_ocorrencia')
     else:
         form = OcorrenciaForm(instance=ocorrencia)
@@ -103,6 +101,7 @@ def excluir_ocorrencia(request, ocorrencia_id):
 
 
 def adicionar_comentario(request):
+    
     if request.method == 'POST':
         form = ComentarioForm(request.POST)
         if form.is_valid():
@@ -119,34 +118,11 @@ def adicionar_comentario(request):
 def concluir_ocorrencia(request, ocorrencia_id):
     ocorrencia = get_object_or_404(Ocorrencia, pk=ocorrencia_id)
 
-    ocorrencia.status = Ocorrencia.CONCLUIDA
+    ocorrencia.status = Ocorrencia.StatusOcorrencia.CONCLUIDA
     ocorrencia.save()
-    comentario = Comentario(
-        ocorrencia=ocorrencia,
-        texto="%s Concluiu a ocorrência" % request.user.username,
-        user=request.user
-    )
-    comentario.save()
-    messages.success(request, 'Ocorrência {} concluída com sucesso!'.format(ocorrencia.id))
+    messages.success(request, f'Ocorrência {ocorrencia.ordem_de_servico} concluída com sucesso!')
     
     return redirect('lista_ocorrencia')
-def cancelar_ocorrencia(request, ocorrencia_id):
-    ocorrencia = get_object_or_404(Ocorrencia, pk=ocorrencia_id)
-
-    ocorrencia.status = Ocorrencia.CANCELADA
-    ocorrencia.save()
-    comentario = Comentario(
-        ocorrencia=ocorrencia,
-        texto=request.POST.get('comentario',''),
-        user=request.user
-    )
-    comentario.save()
-    messages.success(request, 'Ocorrência {} cancelada com sucesso!'.format(ocorrencia.ordem_de_servico))
-    
-    return redirect('lista_ocorrencia')
-
-
-
 
 @login_required
 def iniciar_plantao(request):
