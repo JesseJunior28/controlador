@@ -117,21 +117,21 @@
                 </td>
                 <td>
                   <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-primary btn-sm" href="#view-occ-{{ocorrencia.pk}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalhes">
+                    <button type="button" class="btn btn-primary btn-sm" href="#view-occ-{{ocorrencia.pk}}"  data-bs-placement="top" title="Ver detalhes">
                       <i class="bi bi-eye"></i>
                     </button>
                     {% if ocorrencia.em_aberto %}
 
-                    <a href="{% url 'editar_ocorrencia' ocorrencia.id %}" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar ocorrência">
+                    <a href="{% url 'editar_ocorrencia' ocorrencia.id %}" class="btn btn-secondary btn-sm" data-bs-placement="top" title="Editar ocorrência">
                       <i class="bi bi-pencil"></i>
                     </a>
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#excluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'excluir_ocorrencia' ocorrencia.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="Excluir ocorrência" data-confirm="Tem certeza que deseja excluir esta ocorrência?">
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#excluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'excluir_ocorrencia' ocorrencia.id %}" data-bs-placement="top" title="Excluir ocorrência" data-confirm="Tem certeza que deseja excluir esta ocorrência?">
                     <i class="bi bi-trash"></i>
                     </button>
-                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#concluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'concluir_ocorrencia' ocorrencia.id %}"  data-bs-placement="top" title="Concluir ocorrência" data-confirm="Tem certeza que deseja concluir esta ocorrência?">
+                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#concluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'concluir_ocorrencia' ocorrencia.id %}" data-bs-placement="top" title="Concluir ocorrência" data-confirm="Tem certeza que deseja concluir esta ocorrência?">
                     <i class="bi bi-check-circle"></i>
                     </button>
-                    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#comentarioModal" data-ocorrencia="{{ocorrencia.id}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar comentário">
+                    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#comentarioModal" data-ocorrencia="{{ocorrencia.id}}" data-bs-placement="top" title="Adicionar comentário">
                     <i class="bi bi-chat"></i>
                     </button>
                     {% endif %}
@@ -141,7 +141,7 @@
               <tr>
                 <td colspan="7" class="p-0">
                   <div
-                    class="accordian-body collapse {% if ocorrencia.id == ocorrencia_id %} show {% endif %}"
+                    class="accordion-body collapse {% if ocorrencia.id == ocorrencia_id %} show {% endif %}"
                     id="view-occ-{{ocorrencia.pk}}"
                     style="background-color: #f8f9fa;"
                   >
@@ -181,7 +181,7 @@
                               </p>
                               <p class="card-text">
                                 <strong>Status:</strong> 
-                               {{ocorrencia.get_status_display}}
+                               {{ ocorrencia.get_status_display }}
                               </p>
                             </div>
                           </div>
@@ -252,8 +252,6 @@
 </div>
 {% endif %}
 </div>
-
-
 <div class="modal fade" id="excluirModal" tabindex="-1" role="dialog" aria-labelledby="excluirModalLabel" aria-hidden="true">
 <div class="modal-dialog" role="document">
   <div class="modal-content">
@@ -352,12 +350,6 @@ role="dialog" aria-labelledby="comentarioModalLabel" aria-hidden="true">
 
 {% block script %}
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // 1> Inicializa todos os tooltips do Bootstrap
-    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-      new bootstrap.Tooltip(el);
-    });
-  
     // 2> Modal de Exclusão
     const excluirModal = document.getElementById('excluirModal');
     const excluirForm = document.getElementById('excluirForm');
