@@ -100,19 +100,19 @@ def excluir_ocorrencia(request, ocorrencia_id):
     return redirect('lista_ocorrencia')
 
 
-def adicionar_comentario(request):
+def adicionar_comentario(request):   
     if request.method == 'POST':
         form = ComentarioForm(request.POST)
         if form.is_valid():
-            comentario = form.save(commit=False)
-            comentario.user = request.user  # Associa o usuário logado
-            comentario.save()
-            base_url = reverse('lista_ocorrencia')
-            query_string = urlencode({'ocorrencia_id': comentario.ocorrencia.id})
-            url = f'{base_url}?{query_string}'
+            comentario = form.save()
+            base_url = reverse('lista_ocorrencia') # Obtém a URL base
+            query_string = urlencode({'ocorrencia_id': comentario.ocorrencia.id }) # Cria a query string
+            url = '{}?{}'.format(base_url, query_string)
             messages.success(request, 'Comentário adicionado com sucesso!')
             return redirect(url)
+        return redirect('lista_ocorrencia')
     return redirect('lista_ocorrencia')
+
 
 
 def concluir_ocorrencia(request, ocorrencia_id):

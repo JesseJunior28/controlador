@@ -44,6 +44,7 @@ class OcorrenciaForm(forms.ModelForm):
             'planta', 'ativo',
             'endereco', 'localizacao',
             'criticidade', 'status',
+            'ordem_de_servico',
             'data_solicitacao', 'descricao'
         ]
         widgets = {
@@ -153,15 +154,10 @@ class OcorrenciaFilterForm(forms.ModelForm):
         self.fields['status'].required = False
 
 class ComentarioForm(forms.ModelForm):
-    
     class Meta:
         model = Comentario
-        fields = ['texto', 'user', 'ocorrencia', ]
-    
-    def __init__(self, *args):
-        super(ComentarioForm, self).__init__(*args)
-        self.fields['texto'].widget.attrs.update({'class': 'form-control', 'rows': 4})
-        self.fields['user'].widget.attrs.update({'class': 'form-control'})        
+        fields = ['texto', 'user', 'ocorrencia']
+       
 
 class DataSolicitacaoForm(forms.ModelForm):
     class Meta:

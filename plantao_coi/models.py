@@ -147,6 +147,7 @@ class Ocorrencia(models.Model):
         related_name="ocorrencias_externas",
         verbose_name="Local Externo"
     )
+    ordem_de_servico = models.CharField('OS', max_length=13)
 
     titulo = models.CharField(max_length=30, verbose_name="Título")
 

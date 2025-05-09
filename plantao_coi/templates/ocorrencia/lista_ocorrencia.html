@@ -125,11 +125,11 @@
                     <a href="{% url 'editar_ocorrencia' ocorrencia.id %}" class="btn btn-secondary btn-sm" data-bs-placement="top" title="Editar ocorrência">
                       <i class="bi bi-pencil"></i>
                     </a>
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#excluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'excluir_ocorrencia' ocorrencia.id %}" data-bs-placement="top" title="Excluir ocorrência" data-confirm="Tem certeza que deseja excluir esta ocorrência?">
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#excluirModal" data-os="{{ocorrencia.ordem_de_servico}}" data-url="{% url 'cancelar_ocorrencia' ocorrencia.id %}" data-bs-placement="top" title="Excluir ocorrência" data-confirm="Tem certeza que deseja excluir esta ocorrência?">
                     <i class="bi bi-trash"></i>
                     </button>
-                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#concluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'concluir_ocorrencia' ocorrencia.id %}"  data-bs-placement="top" title="Concluir ocorrência" data-confirm="Tem certeza que deseja concluir esta ocorrência?">
-                    <i class="bi bi-check-circle"></i>
+                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#concluirModal" data-os="{{ocorrencia.ordem_de_servico}}" data-url="{% url 'concluir_ocorrencia' ocorrencia.id %}"  data-bs-placement="top" title="Concluir ocorrência" data-confirm="Tem certeza que deseja concluir esta ocorrência?">
+                      <i class="bi bi-check-circle"></i>
                     </button>
                     <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#comentarioModal" data-ocorrencia="{{ocorrencia.id}}" data-bs-placement="top" title="Adicionar comentário">
                     <i class="bi bi-chat"></i>
@@ -249,156 +249,152 @@
 {% endif %}
 </div>
 <div class="modal fade" id="excluirModal" tabindex="-1" role="dialog" aria-labelledby="excluirModalLabel" aria-hidden="true">
-<div class="modal-dialog" role="document">
-  <div class="modal-content">
-      <div class="modal-header">
-          <h5 class="modal-title" id="excluirModalLabel">Confirmar Exclusão</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-          Tem certeza que deseja excluir a ocorrência <span id="osExcluir"></span>?
-      </div>
-      <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <form method="get" action="#" id="excluirForm">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger">Excluir</button>
-          </form>
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="excluirModalLabel">Confirmar Exclusão</h5>
+              <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              Tem certeza que deseja excluir a ocorrência <span id="osExcluir"></span>?
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+              <form method="get" action="#" id="excluirForm">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger">Excluir</button>
+              </form>
+          </div>
       </div>
   </div>
 </div>
-</div>
+
 
 
 <div class="modal fade" id="concluirModal" tabindex="-1" role="dialog" aria-labelledby="concluirModalLabel" aria-hidden="true">
-<div class="modal-dialog" role="document">
-  <div class="modal-content">
-      <div class="modal-header">
-          <h5 class="modal-title" id="concluirModalLabel">Confirmar Conclusão</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-          Tem certeza que deseja concluir a ocorrência <span id="osConcluir"></span>?
-      </div>
-      <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <form method="post" action="#" id="concluirForm">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-success">Concluir</button>
-          </form>
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="concluirModalLabel">Confirmar Conclusão</h5>
+              <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              Tem certeza que deseja concluir a ocorrência <span id="osConcluir"></span>?
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+              <form method="post" action="#" id="concluirForm">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-success">Concluir</button>
+              </form>
+          </div>
       </div>
   </div>
 </div>
-</div>
+
 
 
 
 <div class="modal fade" id="cancelarModal" tabindex="-1" role="dialog" aria-labelledby="concluirModalLabel" aria-hidden="true">
-<div class="modal-dialog" role="document">
-  <div class="modal-content">
-      <div class="modal-header">
-          <h5 class="modal-title" id="cancelarModalLabel">Confirmar Cancelamento</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form method="post" action="#" id="cancelarForm">
-        {% csrf_token %}
-        <div class="modal-body">
-          <p>Tem certeza que deseja cancelar a ocorrência <span id="osCancelar"></span>?</p>
-          <div class="form-group">
-            <textarea name="comentario" required="required" id="id_cancel_comentario" class="form-control" rows="3" placeholder="Comentário"></textarea>
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="cancelarModalLabel">Confirmar Cancelamento</h5>
+              <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
           </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-success">Confirmar</button>
-        </div>
-      </form>
-  </div>
-</div>
-</div>
-
-
-<div class="modal fade" id="comentarioModal" tabindex="-1" 
-role="dialog" aria-labelledby="comentarioModalLabel" aria-hidden="true">
-<div class="modal-dialog" role="document">
-  <div class="modal-content">
-      <div class="modal-header">
-          <h5 class="modal-title" id="comentarioModalLabel">Adicionar Comentário</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-          <form method="post" action="{% url 'adicionar_comentario' %}">
-              {% csrf_token %}
+          <form method="post" action="#" id="cancelarForm">
+            {% csrf_token %}
+            <div class="modal-body">
+              <p>Tem certeza que deseja cancelar a ocorrência <span id="osCancelar"></span>?</p>
               <div class="form-group">
-                <input type="hidden" id="id_ocorrencia" name="ocorrencia" value="">
-                <input type="hidden" id="id_user" name="user" value="{{user.id}}">
-                  <label for="texto">Comentário:</label>
-                  <textarea class="form-control" id="texto" name="texto" rows="3" required="true"></textarea>
+                <textarea name="comentario" required="required" id="id_cancel_comentario" class="form-control" rows="3" placeholder="Comentário"></textarea>
               </div>
-              <button type="submit" class="btn btn-primary">Enviar</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-success">Confirmar</button>
+            </div>
           </form>
       </div>
   </div>
 </div>
+
+
+
+<div class="modal fade" id="comentarioModal" tabindex="-1" 
+  role="dialog" aria-labelledby="comentarioModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="comentarioModalLabel">Adicionar Comentário</h5>
+              <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <form method="post" action="{% url 'adicionar_comentario' %}">
+                  {% csrf_token %}
+                  <div class="form-group">
+                    <input type="hidden" id="id_ocorrencia" name="ocorrencia" value="">
+                    <input type="hidden" id="id_user" name="user" value="{{user.id}}">
+                      <label for="texto">Comentário:</label>
+                      <textarea class="form-control" id="texto" name="texto" rows="3" required="true"></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Enviar</button>
+              </form>
+          </div>
+      </div>
+  </div>
 </div>
+
 
 {% endblock %}
 
 {% block script %}
 <script>
-    // 2> Modal de Exclusão
-    const excluirModal = document.getElementById('excluirModal');
-    const excluirForm = document.getElementById('excluirForm');
-    const osExcluir = document.getElementById('osExcluir');
-  
-    if (excluirModal) {
-      excluirModal.addEventListener('show.bs.modal', function (event) {
-        const btn = event.relatedTarget;
-        const os = btn.getAttribute('data-os');
-        const url = btn.getAttribute('data-url');
-        osExcluir.innerText = os;
-        excluirForm.action = url;
-      });
-      excluirModal.addEventListener('hidden.bs.modal', function () {
-        osExcluir.innerText = '';
-        excluirForm.action = '#';
-      });
-    }
-  
-    // 3> Modal de Conclusão
-    const concluirModal = document.getElementById('concluirModal');
-    const concluirForm = document.getElementById('concluirForm');
-    const osConcluir = document.getElementById('osConcluir');
-  
-    if (concluirModal) {
-      concluirModal.addEventListener('show.bs.modal', function (event) {
-        const btn = event.relatedTarget;
-        const os = btn.getAttribute('data-os');
-        const url = btn.getAttribute('data-url');
-        osConcluir.innerText = os;
-        concluirForm.action = url;
-      });
-      concluirModal.addEventListener('hidden.bs.modal', function () {
-        osConcluir.innerText = '';
-        concluirForm.action = '#';
-      });
-    }
-  
-    // 4> Modal de Comentário
-    const comentarioModal = document.getElementById('comentarioModal');
-    const inputCommentOccorrencia = document.getElementById('id_ocorrencia');
-  
-    if (comentarioModal) {
-      comentarioModal.addEventListener('show.bs.modal', function (event) {
-        const btn = event.relatedTarget;
-        const occId = btn.getAttribute('data-ocorrencia');
-        inputCommentOccorrencia.value = occId;
-      });
-      comentarioModal.addEventListener('hidden.bs.modal', function () {
-        inputCommentOccorrencia.value = '';
-      });
-    }});
+  const comentarioModal = document.getElementById('concluirModal');
+  const cancelarModal = document.getElementById('cancelarModal');
+  const excluirModal = document.getElementById('excluirModal');
+  const concluirForm = document.getElementById('concluirForm');
+  const excluirForm = document.getElementById('excluirForm');
+  const osConcluir = document.getElementById('osConcluir');
+  const osCancelar = document.getElementById('osCancelar');
+  const osExcluir = document.getElementById('osExcluir');
+  const inputCommentOccorrencia = document.getElementById('id_ocorrencia');
 
-  </script>
+  $('.btnCommentModal').click(event => {
+    console.log(event.target.dataset.ocorrencia);
+    inputCommentOccorrencia.value = event.target.dataset.ocorrencia;
+  });
+
+  $('.btnConcluir').click(event => {
+    osConcluir.innerText = event.target.dataset.os;
+    concluirForm.action = event.target.dataset.url;
+  });
+
+  $('.btnCancelar').click(event => {
+    osCancelar.innerText = event.target.dataset.os;
+    cancelarForm.action = event.target.dataset.url;
+  });
+
+  $('.btnExcluir').click(event => {
+    osExcluir.innerText = event.target.dataset.os;
+    excluirForm.action = event.target.dataset.url;
+  });
+
+  comentarioModal.addEventListener('hidden.bs.modal', event => {
+    inputCommentOccorrencia.value = '';
+  });
+
+  excluirModal.addEventListener('hidden.bs.modal', event => {
+    osExcluir.innerText = '';
+    excluirForm.action = '#';
+  });
+
+  cancelarModal.addEventListener('hidden.bs.modal', event => {
+    osCancelar.innerText = '';
+    cancelarForm.action = '#';
+  });
+  
+</script>
+
 
 {% endblock %}
