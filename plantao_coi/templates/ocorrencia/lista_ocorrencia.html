@@ -128,7 +128,7 @@
                     <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#excluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'excluir_ocorrencia' ocorrencia.id %}" data-bs-placement="top" title="Excluir ocorrência" data-confirm="Tem certeza que deseja excluir esta ocorrência?">
                     <i class="bi bi-trash"></i>
                     </button>
-                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#concluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'concluir_ocorrencia' ocorrencia.id %}" data-bs-placement="top" title="Concluir ocorrência" data-confirm="Tem certeza que deseja concluir esta ocorrência?">
+                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#concluirModal" data-os="{{ocorrencia.id}}" data-url="{% url 'concluir_ocorrencia' ocorrencia.id %}"  data-bs-placement="top" title="Concluir ocorrência" data-confirm="Tem certeza que deseja concluir esta ocorrência?">
                     <i class="bi bi-check-circle"></i>
                     </button>
                     <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#comentarioModal" data-ocorrencia="{{ocorrencia.id}}" data-bs-placement="top" title="Adicionar comentário">
@@ -187,12 +187,8 @@
                           </div>
                           <div class="col">
                             <p class="card-text">
-                              <strong>Setor Solicitante:</strong> 
-                              {{ocorrencia.get_setor_solicitante_display }}
-                            </p>
-                            <p class="card-text">
                               <strong>Descrição:</strong> 
-                              {{ocorrencia.observacao }}
+                              {{ocorrencia.descricao }}
                             </p>
                           </div>
                         </div>
