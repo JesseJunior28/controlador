@@ -3,6 +3,8 @@ from .models import Ocorrencia, Plantao, Comentario
 from .forms import OcorrenciaForm, ComentarioForm, OcorrenciaFilterForm, PlantaoForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import JsonResponse
+
 from urllib.parse import urlencode
 from datetime import time, datetime
 # Create your views here.
@@ -100,20 +102,34 @@ def excluir_ocorrencia(request, ocorrencia_id):
     return redirect('lista_ocorrencia')
 
 
-def adicionar_comentario(request):   
-    if request.method == 'POST':
-        form = ComentarioForm(request.POST)
-        if form.is_valid():
-            comentario = form.save()
-            base_url = reverse('lista_ocorrencia') # Obtém a URL base
-            query_string = urlencode({'ocorrencia_id': comentario.ocorrencia.id }) # Cria a query string
-            url = '{}?{}'.format(base_url, query_string)
-            messages.success(request, 'Comentário adicionado com sucesso!')
-            return redirect(url)
-        else:
-            print(form.errors)
-        return redirect('lista_ocorrencia')
-    return redirect('lista_ocorrencia')
+def adicionar_comentario(request):
+    try:
+        ocorrencia_id = request.POST.get('ocorrencia')
+        texto = request.POST.get('texto')
+        
+        if not ocorrencia_id or not texto:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Dados incompletos'
+            })
+            
+        ocorrencia = get_object_or_404(Ocorrencia, id=ocorrencia_id)
+        
+        Comentario.objects.create(
+            ocorrencia=ocorrencia,
+            user=request.user,
+            texto=texto
+        )
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Comentário adicionado com sucesso'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        })
 
 
 

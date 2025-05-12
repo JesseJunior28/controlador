@@ -90,7 +90,7 @@
               {% for ocorrencia in ocorrencias %}
               <tr
                 class="accordion-toggle {{ocorrencia.id}}"
-                data-toggle="collapse"
+                data-bs-toggle="collapse"
                 href="#view-occ-{{ocorrencia.pk}}" 
                 role="button"
                 aria-expanded="false"
@@ -345,28 +345,29 @@
 
 
 
-<div class="modal fade" id="comentarioModal" tabindex="-1" 
-  role="dialog" aria-labelledby="comentarioModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="comentarioModalLabel">Adicionar Comentário</h5>
-              <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-              <form method="post" action="{% url 'adicionar_comentario' %}">
-                  {% csrf_token %}
-                  <div class="form-group">
+<div class="modal fade" id="comentarioModal" tabindex="-1" aria-labelledby="comentarioModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="comentarioModalLabel">Adicionar Comentário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'adicionar_comentario' %}" id="comentarioForm">
+                <div class="modal-body">
+                    {% csrf_token %}
                     <input type="hidden" id="id_ocorrencia" name="ocorrencia" value="">
-                    <input type="hidden" id="id_user" name="user" value="{{user.id}}">
-                      <label for="texto">Comentário:</label>
-                      <textarea class="form-control" id="texto" name="texto" rows="3" required="true"></textarea>
-                  </div>
-                  <button type="submit" class="btn btn-primary">Enviar</button>
-              </form>
-          </div>
-      </div>
-  </div>
+                    <div class="mb-3">
+                        <label for="texto" class="form-label">Comentário:</label>
+                        <textarea class="form-control" id="texto" name="texto" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 
@@ -463,28 +464,68 @@
   });
   
   document.addEventListener('DOMContentLoaded', function () {
-    const comentarioModal = document.getElementById('comentarModal');
-    const comentarioForm = comentarioModal.querySelector('form');
-    const inputOcorrencia = comentarioModal.querySelector('#id_ocorrencia');
-    const comentarioBotoes = document.querySelectorAll('button[data-bs-target="#comentarModal"]');
+    const comentarioModal = document.getElementById('comentarioModal');
+    const comentarioForm = document.getElementById('comentarioForm');
+    const inputOcorrencia = document.getElementById('id_ocorrencia');
+
+    // Corrigir seletor do botão (estava errado no data-bs-target)
+    const comentarioBotoes = document.querySelectorAll('button[data-bs-target="#comentarioModal"]');
+
     comentarioBotoes.forEach(botao => {
-      botao.addEventListener('click', function (event) {
-        event.preventDefault();
-
-        const ocorrenciaId = botao.getAttribute('data-ocorrencia');
-        inputOcorrencia.value = ocorrenciaId;
-
-        const modal = new bootstrap.Modal(comentarioModal);
-        modal.show();
-      });
+        botao.addEventListener('click', function (event) {
+            event.preventDefault();
+            const ocorrenciaId = this.getAttribute('data-ocorrencia');
+            inputOcorrencia.value = ocorrenciaId;
+        });
     });
+
+    if (comentarioForm) {
+        comentarioForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitButton = this.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Enviando...';
+
+            const formData = new FormData(this);
+
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const modal = bootstrap.Modal.getInstance(comentarioModal);
+                    modal.hide();
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Erro ao salvar comentário');
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao salvar comentário');
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Enviar';
+            });
+        });
+    }
+
     comentarioModal.addEventListener('hidden.bs.modal', function () {
-      const backdrop = document.querySelector('.modal-backdrop');
-      if (backdrop) {
-        backdrop.remove(); 
-      }
+        comentarioForm.reset();
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.remove();
+        }
     });
-  });
+});
 </script>
 
 {% endblock %}
