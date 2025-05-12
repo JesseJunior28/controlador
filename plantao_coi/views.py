@@ -28,8 +28,8 @@ def lista_ocorrencia(request):
         return redirect('iniciar_plantao')
 
     ocorrencias = Ocorrencia.objects.all()
-    em_aberto = ocorrencias.filter(status=Ocorrencia.StatusOcorrencia.EM_ABERTO).count()
-    form = OcorrenciaFilterForm(request.GET, initial={'status': Ocorrencia.StatusOcorrencia.EM_ABERTO})
+    em_aberto = ocorrencias.filter(status=Ocorrencia.EM_ABERTO).count()
+    form = OcorrenciaFilterForm(request.GET, initial={'status': Ocorrencia.EM_ABERTO})
 
     if request.GET.get('unidade'):
         ocorrencias = ocorrencias.filter(unidade=request.GET.get('unidade'))
@@ -37,8 +37,8 @@ def lista_ocorrencia(request):
         ocorrencias = ocorrencias.filter(data_abertura=request.GET.get('data_abertura'))
     if request.GET.get('data_solicitacao'):
         ocorrencias = ocorrencias.filter(data_solicitacao=request.GET.get('data_solicitacao'))
-    if request.GET.get('status', Ocorrencia.StatusOcorrencia.EM_ABERTO):
-        status = request.GET.get('status', Ocorrencia.StatusOcorrencia.EM_ABERTO)
+    if request.GET.get('status', Ocorrencia.EM_ABERTO):
+        status = request.GET.get('status', Ocorrencia.EM_ABERTO)
         ocorrencias = ocorrencias.filter(status=status)
  
     
@@ -110,6 +110,8 @@ def adicionar_comentario(request):
             url = '{}?{}'.format(base_url, query_string)
             messages.success(request, 'Comentário adicionado com sucesso!')
             return redirect(url)
+        else:
+            print(form.errors)
         return redirect('lista_ocorrencia')
     return redirect('lista_ocorrencia')
 

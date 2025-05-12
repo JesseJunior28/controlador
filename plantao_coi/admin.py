@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Unidade, LocalExterno, Ocorrencia, DataSolicitacao,
+    Unidade, LocalExterno, Ocorrencia, 
     Comentario, Plantao, LocalInterno, Planta, Ativo
 )
 
@@ -21,10 +21,6 @@ class OcorrenciaAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'unidade', 'status', 'local_interno', 'data_solicitacao')
     list_filter = ('status', 'criticidade')
     search_fields = ('titulo', 'descricao')
-
-@admin.register(DataSolicitacao)
-class DataSolicitacaoAdmin(admin.ModelAdmin):
-    list_display = ('data',)
 
 @admin.register(Comentario)
 class ComentarioAdmin(admin.ModelAdmin):

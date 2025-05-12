@@ -11,12 +11,6 @@ class Unidade(models.Model):
     def __str__(self):
         return self.nome
 
-class DataSolicitacao(models.Model):
-    data = models.DateField()
-
-    def __str__(self):
-        return self.data.strftime("%d/%m/%Y")
-
 class Planta(models.Model):
     nome = models.CharField(max_length=100)
 
@@ -119,10 +113,17 @@ class Plantao(models.Model):
         return f"{self.usuario.username} - {self.inicio.strftime('%d/%m/%Y %H:%M') } - {self.turno}"
 
 class Ocorrencia(models.Model):
-    class StatusOcorrencia(models.TextChoices):
-        EM_ABERTO = 'EM_ABERTO', 'Em Aberto'
-        CONCLUIDA = 'CONCLUIDA', 'Concluída'
-        
+    
+    EM_ABERTO = 'EM_ABERTO'
+    CONCLUIDA = 'CONCLUIDA'
+    CANCELADA = 'CANCELADA'
+
+    STATUS_CHOICES = (
+        (EM_ABERTO, 'Em Aberto'),
+        (CONCLUIDA, 'Concluida'),
+        (CANCELADA, 'Cancelada')
+    )
+
 
     unidade = models.ForeignKey(
         Unidade,
@@ -173,20 +174,20 @@ class Ocorrencia(models.Model):
     status = models.CharField(
         'Status',
         max_length=10,
-        blank=False,
-        choices=StatusOcorrencia.choices,
-        default=StatusOcorrencia.EM_ABERTO,
+        choices=STATUS_CHOICES,
+        default=EM_ABERTO,
     )
 
 
 
     @property
     def em_aberto(self):
-        return self.status == self.StatusOcorrencia.EM_ABERTO
-
+        return self.status == self.EM_ABERTO
+    
     @property
-    def concluida(self):
-        return self.status == self.StatusOcorrencia.CONCLUIDA
+    def ta_conluida(self):
+        print(self.id, self.status == self.CONCLUIDA)
+        return self.status == self.CONCLUIDA
 
 
     def __str__(self):
