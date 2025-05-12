@@ -120,7 +120,7 @@ def adicionar_comentario(request):
 def concluir_ocorrencia(request, ocorrencia_id):
     ocorrencia = get_object_or_404(Ocorrencia, pk=ocorrencia_id)
 
-    ocorrencia.status = Ocorrencia.StatusOcorrencia.CONCLUIDA
+    ocorrencia.status = Ocorrencia.CONCLUIDA
     ocorrencia.save()
     messages.success(request, f'Ocorrência {ocorrencia.id} concluída com sucesso!')
     
