@@ -4,7 +4,6 @@ from .forms import OcorrenciaForm, ComentarioForm, OcorrenciaFilterForm, Plantao
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
-
 from urllib.parse import urlencode
 from datetime import time, datetime
 # Create your views here.

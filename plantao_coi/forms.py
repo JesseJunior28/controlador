@@ -44,7 +44,6 @@ class OcorrenciaForm(forms.ModelForm):
             'planta', 'ativo',
             'endereco', 'localizacao',
             'criticidade', 'status',
-            'ordem_de_servico',
             'data_solicitacao', 'descricao'
         ]
         widgets = {

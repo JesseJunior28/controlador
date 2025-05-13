@@ -95,6 +95,7 @@
                 role="button"
                 aria-expanded="false"
                 aria-controls="collapseExample"
+                
               >
                 <td>{{ ocorrencia.id|default:"" }}</td>
                 <td>{{ ocorrencia.unidade|default:"" }}</td>
@@ -133,7 +134,6 @@
                       class="btn btn-danger btn-sm" 
                       data-bs-toggle="modal" 
                       data-bs-target="#excluirModal" 
-                      data-os="{{ocorrencia.ordem_de_servico}}" 
                       data-id="{{ocorrencia.id}}" 
                       data-url="{% url 'excluir_ocorrencia' ocorrencia.id %}" 
                       data-bs-placement="top" 
@@ -145,7 +145,7 @@
                     <button type="button" class="btn btn-warning btn-sm" 
                     data-bs-toggle="modal" 
                     data-bs-target="#concluirModal" 
-                    data-os="{{ocorrencia.id}}" 
+                    data-id="{{ocorrencia.id}}" 
                     data-url="{% url 'concluir_ocorrencia' ocorrencia.id %}"  
                     data-bs-placement="top" 
                     title="Concluir ocorrência" data-confirm="Tem certeza que deseja concluir esta ocorrência?">
@@ -230,7 +230,7 @@
                                   {% for comentario in ocorrencia.comentarios.all %}
                                 <div class="card mb-4">
                                   <div class="card-body">
-                                    <p class="mb-0"><strong>{{comentario.user.username}}:</strong> </p>
+                                    <p class="mb-0"><strong>{{comentario.user}}:</strong> </p>
                                     <p class="mb-0">{{comentario.texto}}</p>
                                     <p class="small text-muted mb-0">{{comentario.data_criacao|date:"d/m/Y"|default:"" }}</p>
                                     
@@ -300,13 +300,13 @@
       <div class="modal-content">
           <div class="modal-header">
               <h5 class="modal-title" id="concluirModalLabel">Confirmar Conclusão</h5>
-              <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
               Tem certeza que deseja concluir a ocorrência <span id="osConcluir"></span>?
           </div>
           <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
               <form method="post" action="#" id="concluirForm">
                   {% csrf_token %}
                   <button type="submit" class="btn btn-success">Concluir</button>
@@ -324,7 +324,7 @@
       <div class="modal-content">
           <div class="modal-header">
               <h5 class="modal-title" id="cancelarModalLabel">Confirmar Cancelamento</h5>
-              <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <form method="post" action="#" id="cancelarForm">
             {% csrf_token %}
@@ -335,7 +335,7 @@
               </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <button type="submit" class="btn btn-success">Confirmar</button>
             </div>
           </form>
@@ -389,6 +389,7 @@
         const excluirUrl = botao.getAttribute('data-url');
 
         osSpan.textContent = ocorrenciaId;
+        
         excluirForm.action = excluirUrl;
 
         const modal = new bootstrap.Modal(excluirModal);
@@ -415,7 +416,7 @@
       botao.addEventListener('click', function (event) {
         event.preventDefault();
 
-        const ocorrenciaId = botao.getAttribute('data-os');
+        const ocorrenciaId = botao.getAttribute('data-id');
         const concluirUrl = botao.getAttribute('data-url');
 
         osConcluirSpan.textContent = ocorrenciaId;
