@@ -89,12 +89,12 @@
             <tbody>
               {% for ocorrencia in ocorrencias %}
               <tr
-                class="accordion-toggle"
+                class="accordion-toggle {{ ocorrencia.pk }}"
                 data-bs-toggle="collapse"
-                href="#view-occ-{{ocorrencia.pk}}" 
+                href="view-occ-{{ocorrencia.pk}}" 
                 role="button"
                 aria-expanded="false"
-                aria-controls="view-occ-{{ocorrencia.pk}}"
+                aria-controls="collapseExample"
                 
               >
                 <td>{{ ocorrencia.id|default:"" }}</td>
@@ -120,7 +120,9 @@
                 <td>
                   <div class="btn-group" role="group">
                     <button type="button" class="btn btn-primary btn-sm" 
-                    data-bs-placement="top" title="Ver detalhes">
+                    data-bs-toggle="collapse"
+                    data-bs-target="#view-occ-{{ocorrencia.pk}}"
+                    title="Ver detalhes">
                     <i class="bi bi-eye"></i>
                     </button>
                     {% if ocorrencia.em_aberto %}
@@ -232,7 +234,7 @@
                                   <div class="card-body">
                                     <p class="mb-0"><strong>{{comentario.user}}:</strong> </p>
                                     <p class="mb-0">{{comentario.texto}}</p>
-                                    <p class="small text-muted mb-0">{{comentario.data_criacao|date:"d/m/Y"|default:"" }}</p>
+                                    <p class="small text-muted mb-0">{{comentario.data_criacao|date:"d/m/Y H:i" |default:"" }}</p>
                                     
                                   </div>
                                 </div>
@@ -371,7 +373,7 @@
 </div>
 
 
-{% block script %}
+{% block scripts %}
 <script>  
 
   document.addEventListener('DOMContentLoaded', function () {
