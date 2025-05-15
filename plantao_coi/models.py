@@ -116,10 +116,14 @@ class Ocorrencia(models.Model):
     
     EM_ABERTO = 'EM_ABERTO'
     CONCLUIDA = 'CONCLUIDA'
+    CANCELADA = 'CANCELADA'
+
+
 
     STATUS_CHOICES = (
         (EM_ABERTO, 'Em Aberto'),
         (CONCLUIDA, 'Concluida'),
+        (CANCELADA, 'Cancelada'),
     )
 
 

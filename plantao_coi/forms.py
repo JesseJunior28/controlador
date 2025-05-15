@@ -151,6 +151,7 @@ class OcorrenciaFilterForm(forms.ModelForm):
         self.fields['criticidade'].required = False
         self.fields['status'].empty_label = 'Status da Ocorrência'
         self.fields['status'].required = False
+        self.fields['data_solicitacao'].required = False
 
 class ComentarioForm(forms.ModelForm):
     class Meta:

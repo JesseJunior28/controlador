@@ -125,12 +125,12 @@
                       type="button" 
                       class="btn btn-danger btn-sm" 
                       data-bs-toggle="modal" 
-                      data-bs-target="#excluirModal" 
+                      data-bs-target="#cancelarModal" 
                       data-id="{{ocorrencia.id}}" 
-                      data-url="{% url 'excluir_ocorrencia' ocorrencia.id %}" 
+                      data-url="{% url 'cancelar_ocorrencia' ocorrencia.id %}" 
                       data-bs-placement="top" 
-                      title="Excluir ocorrência" 
-                      data-confirm="Tem certeza que deseja excluir esta ocorrência?"
+                      title="Cancelar ocorrência" 
+                      data-confirm="Tem certeza que deseja Cancelar esta ocorrência?"
                     >
                       <i class="bi bi-trash"></i>
                     </button>
@@ -311,7 +311,7 @@
 
 
 
-<div class="modal fade" id="cancelarModal" tabindex="-1" role="dialog" aria-labelledby="concluirModalLabel" aria-hidden="true">
+<div class="modal fade" id="cancelarModal" tabindex="-1" role="dialog" aria-labelledby="cancelarModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
       <div class="modal-content">
           <div class="modal-header">
