@@ -195,5 +195,3 @@ class Ocorrencia(models.Model):
     def __str__(self):
         local = self.local_interno or self.local_externo or "Sem local"
         return f"{self.get_status_display()} em {local}: {self.titulo}"
-
-
