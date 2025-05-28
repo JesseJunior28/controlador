@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Unidade, LocalExterno, Ocorrencia, 
+    Unidade, LocalExterno, Ocorrencia, OcorrenciaLog,
     Comentario, Plantao, LocalInterno, Planta, Ativo
 )
 
@@ -37,6 +37,11 @@ class PlantaAdmin(admin.ModelAdmin):
 @admin.register(Ativo)
 class AtivoAdmin(admin.ModelAdmin):
     list_display = ('codigo',)
+
+@admin.register(OcorrenciaLog)
+class OcorrenciaLogAdmin(admin.ModelAdmin):
+    list_display = ('ocorrencia', 'usuario')
+
 
 
 

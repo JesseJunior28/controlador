@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render, redirect, reverse
-from .models import Ocorrencia, Plantao, Comentario
+from .models import Ocorrencia, Plantao, Comentario, OcorrenciaLog
 from .forms import OcorrenciaForm, ComentarioForm, OcorrenciaFilterForm, PlantaoForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -74,6 +74,7 @@ def cadastrar_ocorrencia(request):
         form = OcorrenciaForm(request.POST)
         if form.is_valid():
             ocorrencia = form.save()
+            OcorrenciaLog.objects.create(usuario=request.user, acao=OcorrenciaLog.CRIAR, ocorrencia=ocorrencia)
             messages.success(request, f'Ocorrência {ocorrencia.id} cadastrada com sucesso!')
             return redirect("lista_ocorrencia")
     else:
@@ -87,6 +88,7 @@ def editar_ocorrencia(request, ocorrencia_id):
         form = OcorrenciaForm(request.POST, instance=ocorrencia)
         if form.is_valid():
             form.save()
+            OcorrenciaLog.objects.create(usuario=request.user, acao=OcorrenciaLog.EDITAR, ocorrencia=ocorrencia)
             messages.success(request, f'Ocorrência {ocorrencia.id} editada com sucesso!')
             return redirect('lista_ocorrencia')
     else:
@@ -119,6 +121,11 @@ def adicionar_comentario(request):
             user=request.user,
             texto=texto
         )
+        OcorrenciaLog.objects.create(
+            usuario=request.user,
+            acao=OcorrenciaLog.COMENTAR,
+            ocorrencia=ocorrencia
+        )
         
         return JsonResponse({
             'status': 'success',
@@ -137,6 +144,11 @@ def concluir_ocorrencia(request, ocorrencia_id):
 
     ocorrencia.status = Ocorrencia.CONCLUIDA
     ocorrencia.save()
+    OcorrenciaLog.objects.create(
+        usuario=request.user,
+        acao=OcorrenciaLog.CONCLUIR,
+        ocorrencia=ocorrencia
+    )
     messages.success(request, f'Ocorrência {ocorrencia.id} concluída com sucesso!')
     
     return redirect('lista_ocorrencia')
@@ -152,6 +164,11 @@ def cancelar_ocorrencia(request, ocorrencia_id):
         user=request.user
     )
     comentario.save()
+    OcorrenciaLog.objects.create(
+        usuario=request.user,
+        acao=OcorrenciaLog.CANCELAR,
+        ocorrencia=ocorrencia,
+    )
     messages.success(request, 'Ocorrência {} cancelada com sucesso!'.format(ocorrencia.id))
     
     return redirect('lista_ocorrencia')

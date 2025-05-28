@@ -195,3 +195,33 @@ class Ocorrencia(models.Model):
     def __str__(self):
         local = self.local_interno or self.local_externo or "Sem local"
         return f"{self.get_status_display()} em {local}: {self.titulo}"
+    
+class OcorrenciaLog(models.Model):
+    CRIAR = 'CRIAR'
+    EDITAR = 'EDITAR'
+    CANCELAR = 'CANCELAR'
+    COMENTAR = 'COMENTAR'
+    CONCLUIR = 'CONCLUIR'
+    ACAO_CHOICES = (
+        (CRIAR, 'Criou'),
+        (EDITAR, 'Editou'),
+        (COMENTAR, 'Comentou'),
+        (CANCELAR, 'Cancelou'),
+        (CONCLUIR, 'Concluiu')
+    )
+    ocorrencia = models.ForeignKey('Ocorrencia', on_delete=models.CASCADE, related_name='logs')
+    comentario = models.ForeignKey('Comentario', on_delete=models.CASCADE, related_name='logs', null=True, blank=True)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    acao = models.CharField("Criticidade", max_length=50, choices=ACAO_CHOICES, null=False)
+    descricao = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        extra = kwargs.get('extra', ' ')
+        print(self.usuario.username, self.get_acao_display(), self.ocorrencia.ordem_de_servico)
+        description = "{} {} {}".format(self.usuario.username, self.get_acao_display(), self.ocorrencia.ordem_de_servico)
+        self.description = description + ' ' + extra
+        super(OcorrenciaLog, self).save(*args, **kwargs)
+
+    def _str_(self):
+        return self.descricao
