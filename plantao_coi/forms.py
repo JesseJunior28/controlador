@@ -4,9 +4,10 @@ from django.contrib.admin.widgets import AdminDateWidget
 
 class OcorrenciaForm(forms.ModelForm):
     TIPO_CHOICES = [
-        ('interno', 'Local Interno'),
-        ('externo', 'Local Externo'),
-    ]
+    ('', 'Selecione o tipo de local'),
+    ('interno', 'Local Interno'),
+    ('externo', 'Local Externo'),
+]
 
     tipo_local = forms.ChoiceField(
         choices=TIPO_CHOICES,

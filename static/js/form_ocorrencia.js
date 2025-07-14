@@ -1,30 +1,26 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const tipoLocal = document.querySelector("#id_tipo_local");
-    const internoFields = document.querySelector(".local-interno");
-    const externoFields = document.querySelector(".local-externo");
+document.addEventListener('DOMContentLoaded', () => {
+  const tipoLocalSelect = document.getElementById('id_tipo_local');
+  const localInternoDiv = document.querySelector('.local-interno');
+  const localExternoDiv = document.querySelector('.local-externo');
 
-    // Esconde os campos ao carregar
-    function esconderTodos() {
-        internoFields.style.display = "none";
-        externoFields.style.display = "none";
+  function atualizarCamposVisiveis() {
+    const tipo = tipoLocalSelect.value;
+
+    if (tipo === 'interno') {
+      localInternoDiv.style.display = 'block';
+      localExternoDiv.style.display = 'none';
+    } else if (tipo === 'externo') {
+      localInternoDiv.style.display = 'none';
+      localExternoDiv.style.display = 'block';
+    } else {
+      // Nenhuma seleção ou "Selecione"
+      localInternoDiv.style.display = 'none';
+      localExternoDiv.style.display = 'none';
     }
+  }
 
-    // Mostra os campos com base na seleção
-    function mostrarCamposCorretos() {
-        const valor = tipoLocal.value;
-
-        esconderTodos(); // Esconde tudo antes
-
-        if (valor === "interno") {
-            internoFields.style.display = "block";
-        } else if (valor === "externo") {
-            externoFields.style.display = "block";
-        }
-    }
-
-    // Esconde tudo no início
-    esconderTodos();
-
-    // Ativa ao mudar o tipo de local
-    tipoLocal.addEventListener("change", mostrarCamposCorretos);
+  if (tipoLocalSelect) {
+    tipoLocalSelect.addEventListener('change', atualizarCamposVisiveis);
+    atualizarCamposVisiveis(); // roda ao carregar
+  }
 });
