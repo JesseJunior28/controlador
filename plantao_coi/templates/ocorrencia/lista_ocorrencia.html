@@ -215,23 +215,59 @@
 
                         <div class="row d-flex justify-content-center">
                           <div class="col">
-                            <h3>Comentários</h3>
-                            <div class="card shadow-0 border" style="background-color: #f0f2f5;">
-                              <div class="card-body p-4">
- 
-                                  {% for comentario in ocorrencia.comentarios.all %}
-                                <div class="card mb-4">
-                                  <div class="card-body">
-                                    <p class="mb-0"><strong>{{comentario.user}}:</strong> </p>
-                                    <p class="mb-0">{{comentario.texto}}</p>
-                                    <p class="small text-muted mb-0">{{comentario.data_criacao|date:"d/m/Y H:i" |default:"" }}</p>
-                                    
+                            <ul class="nav nav-tabs mb-3" id="ocorrenciaTabs-{{ocorrencia.id}}" role="tablist">
+                              <li class="nav-item" role="presentation">
+                              <button class="nav-link active" 
+                              id="comentarios-tab-{{ocorrencia.id}}" 
+                              data-bs-toggle="tab" 
+                              data-bs-target="#comentarios-{{ocorrencia.id}}" 
+                              type="button" 
+                              role="tab" 
+                              aria-controls="comentarios-{{ocorrencia.id}}" 
+                              aria-selected="true">Comentários
+                              </button>
+                              </li><li class="nav-item"
+                              role="presentation"><button class="nav-link" 
+                              id="logs-tab-{{ocorrencia.id}}" 
+                              data-bs-toggle="tab" 
+                              data-bs-target="#logs-{{ocorrencia.id}}" 
+                              type="button" 
+                              role="tab" aria-controls="logs-{{ocorrencia.id}}" aria-selected="false">Logs</button></li>
+                            </ul>
+                            <div class="tab-content" id="ocorrenciaTabsContent-{{ocorrencia.id}}">
+                            <!-- Aba Comentários -->
+                            <div class="tab-pane fade show active" id="comentarios-{{ocorrencia.id}}" role="tabpanel" aria-labelledby="comentarios-tab-{{ocorrencia.id}}">
+                              <div class="card shadow-0 border" style="background-color: #f0f2f5;">
+                                <div class="card-body p-4">
+                                {% for comentario in ocorrencia.comentarios.all %}
+                                  <div class="card mb-4">
+                                    <div class="card-body">
+                                      <p class="mb-0"><strong>{{comentario.user}}:</strong></p>
+                                      <p class="mb-0">{{comentario.texto}}</p>
+                                      <p class="small text-muted mb-0">{{comentario.data_criacao|date:"d/m/Y H:i" }}</p>
+                                    </div>
+                                  </div>
+                                  {% empty %}
+                                  <p>Nenhum comentário</p>
+                                  {% endfor %}
+                                </div>
+                              </div>
+                            </div>
+
+                             <!-- Aba Logs -->
+                            <div class="tab-pane fade" id="logs-{{ocorrencia.id}}" role="tabpanel" aria-labelledby="logs-tab-{{ocorrencia.id}}">
+                              <div class="card shadow-0 border" style="background-color: #f0f2f5;">
+                                <div class="card-body p-4">
+                                {% for log in ocorrencia.logs.all|dictsortreversed:"created_at" %}
+                                  <div class="border-bottom pb-2 mb-2">
+                                    <p class="mb-1"><strong>{{ log.usuario }}</strong> - {{ log.get_acao_display }} - {{ log.created_at|date:"d/m/Y H:i" }}</p>
+                                    <p class="mb-0">{{ log.descricao }}</p>
+                                  </div>
+                                  {% empty %}
+                                  <p>Nenhum log registrado para esta ocorrência.</p>
+                                  {% endfor %}
                                   </div>
                                 </div>
-                                {% empty %}
-                                <p>Nenhum comentário</p>
-                        
-                               {% endfor %}
                               </div>
                             </div>
                           </div>
